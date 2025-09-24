@@ -1,14 +1,24 @@
-import React from 'react';
+import { useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
 import { CircularProgress, Box } from '@mui/material';
+import { useAuth } from '../../hooks/useAuth';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
+  requireRole?: 'admin' | 'user';
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { isAuthenticated, loading } = useAuth();
+export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+  children,
+  requireRole
+}) => {
+  const { user, loading, isAuthenticated, restoreSession, hasRole } = useAuth();
+
+  useEffect(() => {
+    if (!user && !loading) {
+      restoreSession();
+    }
+  }, [user, loading, restoreSession]);
 
   if (loading) {
     return (
@@ -23,11 +33,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     );
   }
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated()) {
     return <Navigate to="/login" replace />;
+  }
+
+  if (requireRole && !hasRole(requireRole)) {
+    return <Navigate to="/unauthorized" replace />;
   }
 
   return <>{children}</>;
 };
-
-export default ProtectedRoute;

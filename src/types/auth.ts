@@ -1,8 +1,8 @@
 export interface IUser {
-  id: string;
+  id: number;
   username: string;
-  email: string;
-  name: string;
+  email?: string;
+  name?: string;
   role: 'admin' | 'user';
 }
 
@@ -13,8 +13,10 @@ export interface ILoginCredentials {
 
 export interface IAuthContext {
   user: IUser | null;
+  setUser: (user: IUser | null) => void;
   isAuthenticated: boolean;
   login: (credentials: ILoginCredentials) => Promise<void>;
   logout: () => void;
   loading: boolean;
+  setLoading: (loading: boolean) => void;
 }
