@@ -228,7 +228,11 @@ export const ClientDetails: React.FC<ClientDetailsProps> = ({
                     {stats.totalContracts > 0 && (
                       <Box mt={2}>
                         <Chip
-                          label={`${((stats.attendedVolume / stats.totalVolume) * 100).toFixed(1)}% Completado`}
+                          label={
+                            stats.totalVolume > 0
+                              ? `${((stats.attendedVolume / stats.totalVolume) * 100).toFixed(1)}% Completado`
+                              : '0% Completado'
+                          }
                           color="primary"
                           variant="outlined"
                         />
