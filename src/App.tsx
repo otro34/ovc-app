@@ -7,6 +7,7 @@ import Layout from './components/Layout';
 import LoginPage from './pages/LoginPage';
 import Dashboard from './pages/Dashboard';
 import { Clients } from './pages/Clients';
+import Contracts from './pages/Contracts';
 
 const theme = createTheme({
   palette: {
@@ -37,7 +38,7 @@ function App() {
             >
               <Route index element={<Dashboard />} />
               <Route path="clientes" element={<Clients />} />
-              <Route path="contratos" element={<div>Contratos - Por implementar</div>} />
+              <Route path="contratos" element={<Contracts />} />
               <Route path="pedidos" element={<div>Pedidos - Por implementar</div>} />
             </Route>
             <Route

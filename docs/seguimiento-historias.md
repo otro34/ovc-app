@@ -3,7 +3,7 @@
 ## Estado General del Proyecto
 - **Inicio:** 2025-01-24
 - **Fin estimado:** 2025-03-24 (8 semanas después del inicio)
-- **Progreso Global:** 30%
+- **Progreso Global:** 45%
 
 ## Leyenda de Estados
 - 🔵 **Pendiente:** Historia no iniciada
@@ -31,9 +31,9 @@
 ### Sprint 3 - Gestión de Contratos (Parte 1)
 | ID | Historia | Estado | Issue | PR | Notas |
 |----|----------|--------|-------|-----|-------|
-| HU-007 | Como usuario, quiero poder registrar nuevos contratos | 🔵 Pendiente | - | - | |
-| HU-008 | Como usuario, quiero poder ver la lista de contratos | 🔵 Pendiente | - | - | |
-| HU-009 | Como usuario, quiero poder ver contratos recientes | 🔵 Pendiente | - | - | |
+| HU-007 | Como usuario, quiero poder registrar nuevos contratos | 🟢 Completada | - | - | Formulario con validación completo |
+| HU-008 | Como usuario, quiero poder ver la lista de contratos | 🟢 Completada | - | - | Lista con búsqueda y filtros |
+| HU-009 | Como usuario, quiero poder ver contratos recientes | 🟢 Completada | - | - | Widget de contratos recientes |
 
 ### Sprint 4 - Gestión de Contratos (Parte 2)
 | ID | Historia | Estado | Issue | PR | Notas |
@@ -69,19 +69,19 @@
 |--------|----------|-------------|-------------|------------|--------------|
 | Sprint 1 | 2 | 2 | 0 | 0 | 100% |
 | Sprint 2 | 4 | 4 | 0 | 0 | 100% |
-| Sprint 3 | 3 | 0 | 0 | 3 | 0% |
+| Sprint 3 | 3 | 3 | 0 | 0 | 100% |
 | Sprint 4 | 2 | 0 | 0 | 2 | 0% |
 | Sprint 5 | 4 | 0 | 0 | 4 | 0% |
 | Sprint 6 | 2 | 0 | 0 | 2 | 0% |
 | Sprint 7 | 3 | 0 | 0 | 3 | 0% |
-| **TOTAL** | **20** | **6** | **0** | **14** | **30%** |
+| **TOTAL** | **20** | **9** | **0** | **11** | **45%** |
 
 ### Por Épica
 | Épica | Total HU | Completadas | % Completado |
 |-------|----------|-------------|--------------|
 | Autenticación | 2 | 2 | 100% |
 | Gestión de Clientes | 4 | 4 | 100% |
-| Gestión de Contratos | 5 | 0 | 0% |
+| Gestión de Contratos | 5 | 3 | 60% |
 | Gestión de Pedidos | 4 | 0 | 0% |
 | Reportes y Dashboard | 2 | 0 | 0% |
 | Configuración | 3 | 0 | 0% |
@@ -99,6 +99,27 @@
 ```
 
 ### Historial de Cambios
+
+**Fecha:** 2025-09-24
+**Historia:** HU-007, HU-008 y HU-009
+**Cambio:** 🔵 Pendiente → 🟢 Completada
+**Issue:** -
+**PR:** -
+**Comentarios:** Implementación completa del sistema de gestión de contratos (Parte 1) con:
+- Servicio ContractService con operaciones CRUD para contratos
+- Tipos TypeScript para definición de interfaces de contrato
+- Generación automática de números correlativos (formato 6 dígitos)
+- Componente ContractForm con validación usando React Hook Form + Yup
+- Componente ContractList con funcionalidad de búsqueda y filtrado
+- Componente RecentContracts para mostrar contratos recientes
+- Página principal Contracts integrando todos los componentes con tabs
+- Cálculo automático de volúmenes (atendido/pendiente)
+- Validación de reglas de negocio (no editar/eliminar con pedidos)
+- Formateo de moneda (COP) y fechas localizadas
+- Indicadores visuales de progreso de contratos
+- Integración con IndexedDB mediante Dexie
+- Actualización de routing en App.tsx
+- Validaciones de TypeScript y linting corregidas
 
 **Fecha:** 2025-09-24
 **Historia:** HU-003, HU-004, HU-005 y HU-006
