@@ -91,6 +91,17 @@ class OVDatabase extends Dexie {
       }
     ]);
   }
+
+  /**
+   * Método para forzar la inicialización de datos por defecto
+   */
+  async initializeDefaultData() {
+    const userCount = await this.users.count();
+    if (userCount === 0) {
+      console.log('Inicializando usuarios por defecto...');
+      await this.populate();
+    }
+  }
 }
 
 export const db = new OVDatabase();

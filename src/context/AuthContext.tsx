@@ -1,6 +1,7 @@
 import { useState, useEffect, type ReactNode, useCallback } from 'react';
 import type { IAuthContext, ILoginCredentials, IUser } from '../types/auth';
 import { authService } from '../services/authService';
+import { db } from '../services/database';
 import { AuthContext } from './auth.context';
 
 interface AuthProviderProps {
@@ -14,6 +15,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
+        // Inicializar base de datos primero
+        await db.initializeDefaultData();
+
         const currentUser = await authService.restoreSession();
         if (currentUser) {
           setUser(currentUser);
