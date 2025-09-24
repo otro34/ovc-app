@@ -98,7 +98,6 @@ class OVDatabase extends Dexie {
   async initializeDefaultData() {
     const userCount = await this.users.count();
     if (userCount === 0) {
-      console.log('Inicializando usuarios por defecto...');
       await this.populate();
     }
   }

@@ -27,18 +27,11 @@ class AuthService {
    * Intenta autenticar al usuario con las credenciales proporcionadas
    */
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    // Debug: Verificar usuarios en DB
-    const allUsers = await db.users.toArray();
-    console.log('Usuarios en DB:', allUsers.map(u => ({ username: u.username, id: u.id })));
-    console.log('Intentando login con:', credentials.username);
-
     // Buscar usuario en la base de datos
     const user = await db.users
       .where('username')
       .equals(credentials.username)
       .first();
-
-    console.log('Usuario encontrado:', user ? { username: user.username, id: user.id } : null);
 
     if (!user) {
       throw new Error('Usuario o contraseña incorrectos');
@@ -46,7 +39,6 @@ class AuthService {
 
     // En producción, esto debería ser un hash comparado
     if (user.password !== credentials.password) {
-      console.log('Password mismatch:', { provided: credentials.password, stored: user.password });
       throw new Error('Usuario o contraseña incorrectos');
     }
 

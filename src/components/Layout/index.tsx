@@ -54,10 +54,10 @@ const Layout: React.FC = () => {
   };
 
   const menuItems = [
-    { text: 'Dashboard', icon: <DashboardIcon />, path: '/' },
-    { text: 'Clientes', icon: <PeopleIcon />, path: '/clientes' },
-    { text: 'Contratos', icon: <DescriptionIcon />, path: '/contratos' },
-    { text: 'Pedidos de Venta', icon: <ShoppingCartIcon />, path: '/pedidos' },
+    { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
+    { text: 'Clientes', icon: <PeopleIcon />, path: '/dashboard/clientes' },
+    { text: 'Contratos', icon: <DescriptionIcon />, path: '/dashboard/contratos' },
+    { text: 'Pedidos de Venta', icon: <ShoppingCartIcon />, path: '/dashboard/pedidos' },
   ];
 
   const drawer = (
