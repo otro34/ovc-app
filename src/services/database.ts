@@ -65,7 +65,7 @@ class OVDatabase extends Dexie {
       purchaseOrders: '++id, contractId, orderDate, deliveryDate, status, createdAt'
     });
 
-    this.on('populate', this.populate);
+    this.on('populate', () => this.populate());
   }
 
   private async populate() {
