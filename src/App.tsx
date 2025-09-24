@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 import { AuthProvider } from './context/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import { SessionTimeout } from './components/SessionTimeout';
 import Layout from './components/Layout';
 import LoginPage from './pages/LoginPage';
 import Dashboard from './pages/Dashboard';
@@ -26,7 +27,7 @@ function App() {
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route
-              path="/"
+              path="/dashboard"
               element={
                 <ProtectedRoute>
                   <Layout />
@@ -38,8 +39,19 @@ function App() {
               <Route path="contratos" element={<div>Contratos - Por implementar</div>} />
               <Route path="pedidos" element={<div>Pedidos - Por implementar</div>} />
             </Route>
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute requireRole="admin">
+                  <div>Área de Administración - Solo Admins</div>
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/unauthorized" element={<div>No tienes permisos para acceder a esta página</div>} />
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
+          <SessionTimeout />
         </AuthProvider>
       </BrowserRouter>
     </ThemeProvider>

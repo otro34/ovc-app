@@ -17,8 +17,8 @@
 ### Sprint 1 - Configuración Base y Autenticación
 | ID | Historia | Estado | Issue | PR | Notas |
 |----|----------|--------|-------|-----|-------|
-| HU-001 | Como usuario, quiero poder iniciar sesión en el sistema | 🔵 Pendiente | - | - | |
-| HU-002 | Como usuario, quiero poder cerrar sesión del sistema | 🔵 Pendiente | - | - | |
+| HU-001 | Como usuario, quiero poder iniciar sesión en el sistema | 🟢 Completada | - | - | Sistema de login implementado |
+| HU-002 | Como usuario, quiero poder cerrar sesión del sistema | 🟢 Completada | - | - | Sistema de logout y gestión de sesión completo |
 
 ### Sprint 2 - Gestión de Clientes
 | ID | Historia | Estado | Issue | PR | Notas |
@@ -67,19 +67,19 @@
 ### Por Sprint
 | Sprint | Total HU | Completadas | En Progreso | Pendientes | % Completado |
 |--------|----------|-------------|-------------|------------|--------------|
-| Sprint 1 | 2 | 0 | 0 | 2 | 0% |
+| Sprint 1 | 2 | 2 | 0 | 0 | 100% |
 | Sprint 2 | 4 | 0 | 0 | 4 | 0% |
 | Sprint 3 | 3 | 0 | 0 | 3 | 0% |
 | Sprint 4 | 2 | 0 | 0 | 2 | 0% |
 | Sprint 5 | 4 | 0 | 0 | 4 | 0% |
 | Sprint 6 | 2 | 0 | 0 | 2 | 0% |
 | Sprint 7 | 3 | 0 | 0 | 3 | 0% |
-| **TOTAL** | **20** | **0** | **0** | **20** | **0%** |
+| **TOTAL** | **20** | **2** | **0** | **18** | **10%** |
 
 ### Por Épica
 | Épica | Total HU | Completadas | % Completado |
 |-------|----------|-------------|--------------|
-| Autenticación | 2 | 0 | 0% |
+| Autenticación | 2 | 2 | 100% |
 | Gestión de Clientes | 4 | 0 | 0% |
 | Gestión de Contratos | 5 | 0 | 0% |
 | Gestión de Pedidos | 4 | 0 | 0% |
@@ -99,7 +99,21 @@
 ```
 
 ### Historial de Cambios
-<!-- Los cambios se agregarán aquí conforme avance el proyecto -->
+
+**Fecha:** 2025-01-24
+**Historia:** HU-001 y HU-002
+**Cambio:** 🔵 Pendiente → 🟢 Completada
+**Issue:** -
+**PR:** -
+**Comentarios:** Implementación completa del sistema de autenticación con:
+- Servicio de autenticación con persistencia en localStorage
+- Gestión de sesiones con timeout automático (30 minutos)
+- Hook useAuth para gestión de estado
+- Componente ProtectedRoute con verificación de roles
+- Componente SessionTimeout con alerta de expiración
+- Tests básicos del servicio de autenticación
+- Integración con IndexedDB para almacenamiento de usuarios
+- Configuración de rutas protegidas en App.tsx
 
 ---
 

@@ -1,6 +1,7 @@
-import { useState, useEffect, type ReactNode } from 'react';
+import { useState, useEffect, type ReactNode, useCallback } from 'react';
 import type { IAuthContext, ILoginCredentials, IUser } from '../types/auth';
-import { authService } from '../services/auth';
+import { authService } from '../services/authService';
+import { db } from '../services/database';
 import { AuthContext } from './auth.context';
 
 interface AuthProviderProps {
@@ -12,29 +13,47 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const currentUser = authService.getCurrentUser();
-    if (currentUser) {
-      setUser(currentUser);
-    }
-    setLoading(false);
+    const initializeAuth = async () => {
+      try {
+        // Inicializar base de datos primero
+        await db.initializeDefaultData();
+
+        const currentUser = await authService.restoreSession();
+        if (currentUser) {
+          setUser(currentUser);
+        }
+      } catch (error) {
+        console.error('Error inicializando sesión:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initializeAuth();
   }, []);
 
-  const login = async (credentials: ILoginCredentials): Promise<void> => {
-    const loggedInUser = await authService.login(credentials);
-    setUser(loggedInUser);
-  };
+  const login = useCallback(async (credentials: ILoginCredentials): Promise<void> => {
+    try {
+      const response = await authService.login(credentials);
+      setUser(response.user);
+    } catch (error) {
+      throw error;
+    }
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     authService.logout();
     setUser(null);
-  };
+  }, []);
 
   const value: IAuthContext = {
     user,
+    setUser,
     isAuthenticated: !!user,
     login,
     logout,
     loading,
+    setLoading,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

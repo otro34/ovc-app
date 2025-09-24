@@ -12,7 +12,7 @@ const getUsers = (): StoredUser[] => {
   if (!users) {
     const defaultUsers: StoredUser[] = [
       {
-        id: '1',
+        id: 1,
         username: 'admin',
         password: 'admin123',
         email: 'admin@ovapp.com',
@@ -20,7 +20,7 @@ const getUsers = (): StoredUser[] => {
         role: 'admin',
       },
       {
-        id: '2',
+        id: 2,
         username: 'usuario',
         password: 'usuario123',
         email: 'usuario@ovapp.com',
