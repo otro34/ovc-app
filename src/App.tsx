@@ -6,6 +6,7 @@ import { SessionTimeout } from './components/SessionTimeout';
 import Layout from './components/Layout';
 import LoginPage from './pages/LoginPage';
 import Dashboard from './pages/Dashboard';
+import { Clients } from './pages/Clients';
 
 const theme = createTheme({
   palette: {
@@ -35,7 +36,7 @@ function App() {
               }
             >
               <Route index element={<Dashboard />} />
-              <Route path="clientes" element={<div>Clientes - Por implementar</div>} />
+              <Route path="clientes" element={<Clients />} />
               <Route path="contratos" element={<div>Contratos - Por implementar</div>} />
               <Route path="pedidos" element={<div>Pedidos - Por implementar</div>} />
             </Route>

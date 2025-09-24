@@ -33,12 +33,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const login = useCallback(async (credentials: ILoginCredentials): Promise<void> => {
-    try {
-      const response = await authService.login(credentials);
-      setUser(response.user);
-    } catch (error) {
-      throw error;
-    }
+    const response = await authService.login(credentials);
+    setUser(response.user);
   }, []);
 
   const logout = useCallback(() => {

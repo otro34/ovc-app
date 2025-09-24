@@ -1,9 +1,9 @@
 # Seguimiento de Historias de Usuario - OV-APP
 
 ## Estado General del Proyecto
-- **Inicio:** Por definir
-- **Fin estimado:** 8 semanas después del inicio
-- **Progreso Global:** 0%
+- **Inicio:** 2025-01-24
+- **Fin estimado:** 2025-03-24 (8 semanas después del inicio)
+- **Progreso Global:** 30%
 
 ## Leyenda de Estados
 - 🔵 **Pendiente:** Historia no iniciada
@@ -23,10 +23,10 @@
 ### Sprint 2 - Gestión de Clientes
 | ID | Historia | Estado | Issue | PR | Notas |
 |----|----------|--------|-------|-----|-------|
-| HU-003 | Como usuario, quiero poder registrar nuevos clientes | 🔵 Pendiente | - | - | |
-| HU-004 | Como usuario, quiero poder ver la lista de clientes | 🔵 Pendiente | - | - | |
-| HU-005 | Como usuario, quiero poder editar información de clientes | 🔵 Pendiente | - | - | |
-| HU-006 | Como usuario, quiero poder eliminar clientes sin contratos | 🔵 Pendiente | - | - | |
+| HU-003 | Como usuario, quiero poder registrar nuevos clientes | 🟢 Completada | - | - | Formulario con validación completo |
+| HU-004 | Como usuario, quiero poder ver la lista de clientes | 🟢 Completada | - | - | Lista con búsqueda y paginación |
+| HU-005 | Como usuario, quiero poder editar información de clientes | 🟢 Completada | - | - | Edición en línea implementada |
+| HU-006 | Como usuario, quiero poder eliminar clientes sin contratos | 🟢 Completada | - | - | Validación de contratos asociados |
 
 ### Sprint 3 - Gestión de Contratos (Parte 1)
 | ID | Historia | Estado | Issue | PR | Notas |
@@ -68,19 +68,19 @@
 | Sprint | Total HU | Completadas | En Progreso | Pendientes | % Completado |
 |--------|----------|-------------|-------------|------------|--------------|
 | Sprint 1 | 2 | 2 | 0 | 0 | 100% |
-| Sprint 2 | 4 | 0 | 0 | 4 | 0% |
+| Sprint 2 | 4 | 4 | 0 | 0 | 100% |
 | Sprint 3 | 3 | 0 | 0 | 3 | 0% |
 | Sprint 4 | 2 | 0 | 0 | 2 | 0% |
 | Sprint 5 | 4 | 0 | 0 | 4 | 0% |
 | Sprint 6 | 2 | 0 | 0 | 2 | 0% |
 | Sprint 7 | 3 | 0 | 0 | 3 | 0% |
-| **TOTAL** | **20** | **2** | **0** | **18** | **10%** |
+| **TOTAL** | **20** | **6** | **0** | **14** | **30%** |
 
 ### Por Épica
 | Épica | Total HU | Completadas | % Completado |
 |-------|----------|-------------|--------------|
 | Autenticación | 2 | 2 | 100% |
-| Gestión de Clientes | 4 | 0 | 0% |
+| Gestión de Clientes | 4 | 4 | 100% |
 | Gestión de Contratos | 5 | 0 | 0% |
 | Gestión de Pedidos | 4 | 0 | 0% |
 | Reportes y Dashboard | 2 | 0 | 0% |
@@ -99,6 +99,24 @@
 ```
 
 ### Historial de Cambios
+
+**Fecha:** 2025-09-24
+**Historia:** HU-003, HU-004, HU-005 y HU-006
+**Cambio:** 🔵 Pendiente → 🟢 Completada
+**Issue:** -
+**PR:** -
+**Comentarios:** Implementación completa del sistema de gestión de clientes con:
+- Servicio ClientService con operaciones CRUD completas
+- Tipos TypeScript para definición de interfaces de cliente
+- Componente ClientForm con validación usando React Hook Form + Yup
+- Componente ClientList con funcionalidad de búsqueda, filtrado y paginación
+- Componente ClientDetails con estadísticas y información completa
+- Página principal Clients integrando todos los componentes
+- Validación de eliminación (no permite eliminar clientes con contratos)
+- Funcionalidad de búsqueda por nombre, email y teléfono
+- Integración con IndexedDB mediante Dexie
+- Tests unitarios básicos para el servicio
+- Actualización de routing en App.tsx
 
 **Fecha:** 2025-01-24
 **Historia:** HU-001 y HU-002
