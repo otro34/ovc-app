@@ -113,11 +113,13 @@ const ContractForm: React.FC<IContractFormProps> = ({
                     disabled={loading}
                   >
                     <MenuItem value={0}>Seleccione un cliente</MenuItem>
-                    {clients.map((client) => (
-                      <MenuItem key={client.id} value={client.id!}>
-                        {client.name}
-                      </MenuItem>
-                    ))}
+                    {clients
+                      .filter((client) => client.id !== undefined && client.id !== null)
+                      .map((client) => (
+                        <MenuItem key={client.id} value={client.id}>
+                          {client.name}
+                        </MenuItem>
+                      ))}
                   </Select>
                 )}
               />
