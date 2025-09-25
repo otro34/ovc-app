@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Container,
   Typography,
@@ -42,6 +43,7 @@ const TabPanel = ({ children, value, index, ...other }: TabPanelProps) => (
 );
 
 const Contracts: React.FC = () => {
+  const navigate = useNavigate();
   const [contracts, setContracts] = useState<IContractWithClient[]>([]);
   const [recentContracts, setRecentContracts] = useState<IContractWithClient[]>([]);
   const [clients, setClients] = useState<IClient[]>([]);
@@ -206,6 +208,23 @@ const Contracts: React.FC = () => {
     handleDelete(contractId);
   };
 
+  const handleCreateOrderFromDetails = (contractId: number) => {
+    // Cerrar el modal de detalles del contrato
+    handleCloseDetails();
+    // Navegar a la página de pedidos con el contrato preseleccionado
+    navigate('/dashboard/pedidos', {
+      state: {
+        preselectedContractId: contractId,
+        openForm: true
+      }
+    });
+  };
+
+  const handleCancelOrderFromDetails = (orderId: number) => {
+    // TODO: Implementar cancelación de pedidos desde detalles de contrato
+    console.log('Cancel order:', orderId);
+  };
+
   const getFormInitialData = (): IContractFormData | undefined => {
     if (!editingContract) return undefined;
 
@@ -307,6 +326,8 @@ const Contracts: React.FC = () => {
               onClose={handleCloseDetails}
               onEdit={handleEditFromDetails}
               onDelete={handleDeleteFromDetails}
+              onCreateOrder={handleCreateOrderFromDetails}
+              onCancelOrder={handleCancelOrderFromDetails}
               purchaseOrders={[]} // TODO: Load purchase orders from service
               loading={loading}
             />
