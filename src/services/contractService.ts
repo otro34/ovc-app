@@ -109,6 +109,11 @@ export class ContractService {
     });
   }
 
+  async updateContractVolumes(contractId: number, volume: number, operation: 'add' | 'subtract'): Promise<void> {
+    const volumeChange = operation === 'add' ? volume : -volume;
+    await this.updateVolumes(contractId, volumeChange);
+  }
+
   async canEditContract(id: number): Promise<boolean> {
     const purchaseOrders = await db.purchaseOrders.where('contractId').equals(id).toArray();
     return purchaseOrders.length === 0;

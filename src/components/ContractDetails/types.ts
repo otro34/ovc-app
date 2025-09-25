@@ -5,6 +5,8 @@ export interface IContractDetailsProps {
   onClose: () => void;
   onEdit?: (contract: IContractWithClient) => void;
   onDelete?: (contractId: number) => void;
+  onCreateOrder?: (contractId: number) => void;
+  onCancelOrder?: (orderId: number) => void;
   purchaseOrders?: IPurchaseOrder[];
   loading?: boolean;
 }

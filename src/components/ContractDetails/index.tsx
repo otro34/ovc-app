@@ -3,14 +3,10 @@ import {
   Typography,
   Button,
   Box,
-  Chip,
   LinearProgress,
   IconButton,
   Tooltip,
-  Divider,
-  List,
-  ListItem,
-  ListItemText
+  Divider
 } from '@mui/material';
 import {
   Close,
@@ -22,9 +18,7 @@ import {
   AttachMoney,
   Scale,
   CheckCircle,
-  Schedule,
-  Cancel,
-  LocalShipping
+  Schedule
 } from '@mui/icons-material';
 
 import {
@@ -34,20 +28,20 @@ import {
   InfoGrid,
   InfoCard,
   ProgressSection,
-  PurchaseOrdersSection,
-  PurchaseOrderCard,
   ActionsSection,
   StatusChip
 } from './styles';
 import type { IContractDetailsProps, IContractProgress } from './types';
 import { useContractPermissions } from '../../hooks/useContractPermissions';
+import { ContractOrdersList } from '../ContractOrdersList';
 
 const ContractDetails: React.FC<IContractDetailsProps> = ({
   contract,
   onClose,
   onEdit,
   onDelete,
-  purchaseOrders = []
+  onCreateOrder,
+  onCancelOrder,
 }) => {
   const { canEdit, canDelete } = useContractPermissions(contract);
   const formatCurrency = (amount: number) => {
@@ -103,31 +97,6 @@ const ContractDetails: React.FC<IContractDetailsProps> = ({
   };
 
 
-  const getPurchaseOrderStatusIcon = (status: string) => {
-    switch (status) {
-      case 'delivered':
-        return <CheckCircle color="success" />;
-      case 'pending':
-        return <Schedule color="warning" />;
-      case 'cancelled':
-        return <Cancel color="error" />;
-      default:
-        return <LocalShipping />;
-    }
-  };
-
-  const getPurchaseOrderStatusLabel = (status: string) => {
-    switch (status) {
-      case 'delivered':
-        return 'Entregado';
-      case 'pending':
-        return 'Pendiente';
-      case 'cancelled':
-        return 'Cancelado';
-      default:
-        return status;
-    }
-  };
 
   const progress = getProgress();
 
@@ -256,66 +225,14 @@ const ContractDetails: React.FC<IContractDetailsProps> = ({
         </Typography>
       </ProgressSection>
 
-      <PurchaseOrdersSection>
-        <Typography variant="h6" gutterBottom>
-          Pedidos de Venta Asociados ({purchaseOrders.length})
-        </Typography>
-
-        {purchaseOrders.length === 0 ? (
-          <Box textAlign="center" py={3}>
-            <LocalShipping sx={{ fontSize: 48, color: 'text.secondary', mb: 1 }} />
-            <Typography variant="body1" color="text.secondary">
-              No hay pedidos de venta registrados para este contrato
-            </Typography>
-          </Box>
-        ) : (
-          <List>
-            {purchaseOrders.map((order) => (
-              <PurchaseOrderCard key={order.id}>
-                <ListItem>
-                  <Box display="flex" alignItems="center" gap={1} mr={2}>
-                    {getPurchaseOrderStatusIcon(order.status)}
-                  </Box>
-                  <ListItemText
-                    primary={
-                      <Box display="flex" alignItems="center" gap={2}>
-                        <Typography variant="subtitle1" fontWeight="medium">
-                          {order.volume.toFixed(2)} Toneladas
-                        </Typography>
-                        <Chip
-                          label={getPurchaseOrderStatusLabel(order.status)}
-                          color={
-                            order.status === 'delivered' ? 'success' :
-                            order.status === 'pending' ? 'warning' :
-                            'error'
-                          }
-                          size="small"
-                        />
-                      </Box>
-                    }
-                    secondary={
-                      <Box>
-                        <Typography variant="body2" color="text.secondary">
-                          Precio: {formatCurrency(order.price)}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          Fecha: {formatDateShort(order.orderDate)}
-                          {order.deliveryDate && ` | Entrega: ${formatDateShort(order.deliveryDate)}`}
-                        </Typography>
-                        {order.notes && (
-                          <Typography variant="body2" color="text.secondary">
-                            Notas: {order.notes}
-                          </Typography>
-                        )}
-                      </Box>
-                    }
-                  />
-                </ListItem>
-              </PurchaseOrderCard>
-            ))}
-          </List>
-        )}
-      </PurchaseOrdersSection>
+      {contract.id && (
+        <ContractOrdersList
+          contractId={contract.id}
+          onCreateOrder={onCreateOrder}
+          onCancelOrder={onCancelOrder}
+          showCreateButton={true}
+        />
+      )}
 
       <Divider sx={{ my: 2 }} />
 

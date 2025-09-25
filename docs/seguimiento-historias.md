@@ -3,7 +3,7 @@
 ## Estado General del Proyecto
 - **Inicio:** 2025-01-24
 - **Fin estimado:** 2025-03-24 (8 semanas después del inicio)
-- **Progreso Global:** 55%
+- **Progreso Global:** 75%
 
 ## Leyenda de Estados
 - 🔵 **Pendiente:** Historia no iniciada
@@ -44,10 +44,10 @@
 ### Sprint 5 - Gestión de Pedidos de Venta
 | ID | Historia | Estado | Issue | PR | Notas |
 |----|----------|--------|-------|-----|-------|
-| HU-012 | Como usuario, quiero poder registrar pedidos de venta | 🔵 Pendiente | - | - | |
-| HU-013 | Como usuario, quiero poder ver la lista de pedidos | 🔵 Pendiente | - | - | |
-| HU-014 | Como usuario, quiero ver pedidos de un contrato | 🔵 Pendiente | - | - | |
-| HU-015 | Como usuario, quiero poder anular un pedido | 🔵 Pendiente | - | - | |
+| HU-012 | Como usuario, quiero poder registrar pedidos de venta | 🟢 Completada | - | - | Formulario completo con validaciones de volumen |
+| HU-013 | Como usuario, quiero poder ver la lista de pedidos | 🟢 Completada | - | - | Lista con búsqueda, filtros y paginación |
+| HU-014 | Como usuario, quiero ver pedidos de un contrato | 🟢 Completada | - | - | Vista integrada en detalles de contrato |
+| HU-015 | Como usuario, quiero poder anular un pedido | 🟢 Completada | - | - | Cancelación con confirmación y restauración de volúmenes |
 
 ### Sprint 6 - Dashboard y Reportes
 | ID | Historia | Estado | Issue | PR | Notas |
@@ -71,10 +71,10 @@
 | Sprint 2 | 4 | 4 | 0 | 0 | 100% |
 | Sprint 3 | 3 | 3 | 0 | 0 | 100% |
 | Sprint 4 | 2 | 2 | 0 | 0 | 100% |
-| Sprint 5 | 4 | 0 | 0 | 4 | 0% |
+| Sprint 5 | 4 | 4 | 0 | 0 | 100% |
 | Sprint 6 | 2 | 0 | 0 | 2 | 0% |
 | Sprint 7 | 3 | 0 | 0 | 3 | 0% |
-| **TOTAL** | **20** | **11** | **0** | **9** | **55%** |
+| **TOTAL** | **20** | **15** | **0** | **5** | **75%** |
 
 ### Por Épica
 | Épica | Total HU | Completadas | % Completado |
@@ -82,7 +82,7 @@
 | Autenticación | 2 | 2 | 100% |
 | Gestión de Clientes | 4 | 4 | 100% |
 | Gestión de Contratos | 5 | 5 | 100% |
-| Gestión de Pedidos | 4 | 0 | 0% |
+| Gestión de Pedidos | 4 | 4 | 100% |
 | Reportes y Dashboard | 2 | 0 | 0% |
 | Configuración | 3 | 0 | 0% |
 
@@ -99,6 +99,38 @@
 ```
 
 ### Historial de Cambios
+
+**Fecha:** 2025-09-25
+**Historia:** HU-012, HU-013, HU-014 y HU-015
+**Cambio:** 🔵 Pendiente → 🟢 Completada
+**Issue:** -
+**PR:** -
+**Comentarios:** Implementación completa del sistema de gestión de pedidos de venta (Sprint 5) con:
+- Servicio PurchaseOrderService con operaciones CRUD para pedidos de venta
+- Tipos TypeScript para definición de interfaces de pedidos
+- Integración completa con contratos (validación de volúmenes disponibles)
+- Componente PurchaseOrderForm con validación usando React Hook Form + Yup
+- Componente PurchaseOrderList con funcionalidad de búsqueda, filtrado y paginación
+- Componente ContractOrdersList para mostrar pedidos específicos de un contrato
+- Componente CancelOrderDialog con confirmación y restauración de volúmenes
+- Componente PurchaseOrderDetails para vista completa de detalles de pedidos
+- Página principal PurchaseOrders integrando todos los componentes
+- Cálculo automático de volúmenes (actualización de volúmenes pendientes en contratos)
+- Validación de reglas de negocio (no exceder volumen disponible)
+- Formateo de moneda (COP) y fechas localizadas
+- Estados de pedidos (pendiente, entregado, cancelado)
+- Funcionalidad de cancelación con restauración automática de volúmenes
+- Navegación cruzada desde ContractDetails a PurchaseOrders con formulario pre-abierto
+- Integración con IndexedDB mediante Dexie
+- Actualización de routing en App.tsx
+- Integración en ContractDetails para mostrar pedidos por contrato
+- Validaciones de TypeScript y build exitoso
+- Tests unitarios mantenidos y funcionales
+- Instalación de dependencias: date-fns y @mui/x-date-pickers
+- Corrección de bugs reportados por usuario:
+  * Botón de registro nunca se habilitaba (solucionado con validación específica)
+  * Botón "Nuevo Pedido" no navegaba correctamente (implementada navegación con estado)
+  * Botón "Ver Detalles" no funcionaba (implementado componente PurchaseOrderDetails completo)
 
 **Fecha:** 2025-09-25
 **Historia:** HU-010 y HU-011
