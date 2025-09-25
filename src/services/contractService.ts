@@ -109,6 +109,16 @@ export class ContractService {
     });
   }
 
+  async canEditContract(id: number): Promise<boolean> {
+    const purchaseOrders = await db.purchaseOrders.where('contractId').equals(id).toArray();
+    return purchaseOrders.length === 0;
+  }
+
+  async canDeleteContract(id: number): Promise<boolean> {
+    const purchaseOrders = await db.purchaseOrders.where('contractId').equals(id).toArray();
+    return purchaseOrders.length === 0;
+  }
+
   async getContractStats(): Promise<{
     total: number;
     active: number;

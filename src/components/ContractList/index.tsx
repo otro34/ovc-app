@@ -3,9 +3,6 @@ import {
   Typography,
   TextField,
   InputAdornment,
-  IconButton,
-  Chip,
-  Tooltip,
   CircularProgress,
   Box,
   FormControl,
@@ -15,9 +12,6 @@ import {
 } from '@mui/material';
 import {
   Search,
-  Edit,
-  Delete,
-  Visibility,
   Assignment
 } from '@mui/icons-material';
 
@@ -25,16 +19,10 @@ import {
   ListContainer,
   SearchContainer,
   FilterContainer,
-  ContractCard,
-  ContractHeader,
-  ContractInfo,
-  ContractActions,
-  ContractDetails,
-  DetailItem,
   EmptyState
 } from './styles';
+import ContractCard from '../ContractCard';
 import type { IContractListProps, IContractFilters } from './types';
-import type { IContractWithClient } from '../../types/contract';
 
 const ContractList: React.FC<IContractListProps> = ({
   contracts,
@@ -66,54 +54,6 @@ const ContractList: React.FC<IContractListProps> = ({
     });
   }, [contracts, searchTerm, filters]);
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'success';
-      case 'completed':
-        return 'info';
-      case 'cancelled':
-        return 'error';
-      default:
-        return 'default';
-    }
-  };
-
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'Activo';
-      case 'completed':
-        return 'Completado';
-      case 'cancelled':
-        return 'Cancelado';
-      default:
-        return status;
-    }
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(amount);
-  };
-
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('es-CO', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    }).format(new Date(date));
-  };
-
-  const calculateProgress = (contract: IContractWithClient) => {
-    return contract.totalVolume > 0
-      ? (contract.attendedVolume / contract.totalVolume) * 100
-      : 0;
-  };
 
   if (loading) {
     return (
@@ -177,86 +117,13 @@ const ContractList: React.FC<IContractListProps> = ({
         </EmptyState>
       ) : (
         filteredContracts.map((contract) => (
-          <ContractCard key={contract.id} onClick={() => onView?.(contract)}>
-            <ContractHeader>
-              <ContractInfo>
-                <Box display="flex" alignItems="center" gap={1}>
-                  <Typography variant="h6">
-                    #{contract.correlativeNumber}
-                  </Typography>
-                  <Chip
-                    label={getStatusLabel(contract.status)}
-                    color={getStatusColor(contract.status) as 'success' | 'info' | 'error' | 'default'}
-                    size="small"
-                  />
-                </Box>
-                <Typography variant="subtitle1" color="primary">
-                  {contract.clientName}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Progreso: {calculateProgress(contract).toFixed(1)}% ({contract.attendedVolume.toFixed(2)} / {contract.totalVolume.toFixed(2)} Ton)
-                </Typography>
-              </ContractInfo>
-              <ContractActions onClick={(e) => e.stopPropagation()}>
-                {onView && (
-                  <Tooltip title="Ver detalles">
-                    <IconButton size="small" onClick={() => onView(contract)}>
-                      <Visibility />
-                    </IconButton>
-                  </Tooltip>
-                )}
-                {onEdit && contract.status === 'active' && (
-                  <Tooltip title="Editar contrato">
-                    <IconButton size="small" onClick={() => onEdit(contract)}>
-                      <Edit />
-                    </IconButton>
-                  </Tooltip>
-                )}
-                {onDelete && contract.attendedVolume === 0 && contract.id != null && (
-                  <Tooltip title="Eliminar contrato">
-                    <IconButton size="small" onClick={() => onDelete(contract.id)}>
-                      <Delete />
-                    </IconButton>
-                  </Tooltip>
-                )}
-              </ContractActions>
-            </ContractHeader>
-
-            <ContractDetails>
-              <DetailItem>
-                <Typography variant="caption" color="text.secondary">
-                  Precio Total
-                </Typography>
-                <Typography variant="body2" fontWeight="medium">
-                  {formatCurrency(contract.salePrice)}
-                </Typography>
-              </DetailItem>
-              <DetailItem>
-                <Typography variant="caption" color="text.secondary">
-                  Volumen Pendiente
-                </Typography>
-                <Typography variant="body2" fontWeight="medium">
-                  {contract.pendingVolume.toFixed(2)} Ton
-                </Typography>
-              </DetailItem>
-              <DetailItem>
-                <Typography variant="caption" color="text.secondary">
-                  Fecha Inicio
-                </Typography>
-                <Typography variant="body2">
-                  {formatDate(contract.startDate)}
-                </Typography>
-              </DetailItem>
-              <DetailItem>
-                <Typography variant="caption" color="text.secondary">
-                  Fecha Fin
-                </Typography>
-                <Typography variant="body2">
-                  {formatDate(contract.endDate)}
-                </Typography>
-              </DetailItem>
-            </ContractDetails>
-          </ContractCard>
+          <ContractCard
+            key={contract.id}
+            contract={contract}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            onView={onView}
+          />
         ))
       )}
 

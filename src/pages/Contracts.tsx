@@ -17,6 +17,7 @@ import { Add, Assignment } from '@mui/icons-material';
 
 import ContractForm from '../components/ContractForm';
 import ContractList from '../components/ContractList';
+import ContractDetails from '../components/ContractDetails';
 import RecentContracts from '../components/RecentContracts';
 import { contractService } from '../services/contractService';
 import { clientService } from '../services/clientService';
@@ -47,7 +48,9 @@ const Contracts: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
   const [editingContract, setEditingContract] = useState<IContractWithClient | null>(null);
+  const [viewingContract, setViewingContract] = useState<IContractWithClient | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTab, setSelectedTab] = useState(0);
   const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; contractId: number | null }>({
@@ -142,13 +145,21 @@ const Contracts: React.FC = () => {
     }
   };
 
-  const handleEdit = (contract: IContractWithClient) => {
-    if (contract.attendedVolume > 0) {
-      showNotification('No se puede editar un contrato con pedidos de venta asociados', 'warning');
-      return;
+  const handleEdit = async (contract: IContractWithClient) => {
+    if (!contract.id) return;
+
+    try {
+      const canEdit = await contractService.canEditContract(contract.id);
+      if (!canEdit) {
+        showNotification('No se puede editar un contrato con pedidos de venta asociados', 'warning');
+        return;
+      }
+      setEditingContract(contract);
+      setShowForm(true);
+    } catch (error) {
+      console.error('Error checking edit permissions:', error);
+      showNotification('Error al verificar permisos de edición', 'error');
     }
-    setEditingContract(contract);
-    setShowForm(true);
   };
 
   const handleDelete = (contractId: number) => {
@@ -176,7 +187,23 @@ const Contracts: React.FC = () => {
   };
 
   const handleView = (contract: IContractWithClient) => {
-    console.log('View contract:', contract);
+    setViewingContract(contract);
+    setShowDetails(true);
+  };
+
+  const handleCloseDetails = () => {
+    setShowDetails(false);
+    setViewingContract(null);
+  };
+
+  const handleEditFromDetails = (contract: IContractWithClient) => {
+    handleCloseDetails();
+    handleEdit(contract);
+  };
+
+  const handleDeleteFromDetails = (contractId: number) => {
+    handleCloseDetails();
+    handleDelete(contractId);
   };
 
   const getFormInitialData = (): IContractFormData | undefined => {
@@ -264,6 +291,26 @@ const Contracts: React.FC = () => {
             loading={formLoading}
             initialData={getFormInitialData()}
           />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={showDetails}
+        onClose={handleCloseDetails}
+        maxWidth="lg"
+        fullWidth
+      >
+        <DialogContent sx={{ p: 0 }}>
+          {viewingContract && (
+            <ContractDetails
+              contract={viewingContract}
+              onClose={handleCloseDetails}
+              onEdit={handleEditFromDetails}
+              onDelete={handleDeleteFromDetails}
+              purchaseOrders={[]} // TODO: Load purchase orders from service
+              loading={loading}
+            />
+          )}
         </DialogContent>
       </Dialog>
 
