@@ -212,9 +212,9 @@ const ContractList: React.FC<IContractListProps> = ({
                     </IconButton>
                   </Tooltip>
                 )}
-                {onDelete && contract.attendedVolume === 0 && (
+                {onDelete && contract.attendedVolume === 0 && contract.id != null && (
                   <Tooltip title="Eliminar contrato">
-                    <IconButton size="small" onClick={() => onDelete(contract.id!)}>
+                    <IconButton size="small" onClick={() => onDelete(contract.id)}>
                       <Delete />
                     </IconButton>
                   </Tooltip>
