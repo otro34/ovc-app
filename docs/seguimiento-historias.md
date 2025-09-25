@@ -3,7 +3,7 @@
 ## Estado General del Proyecto
 - **Inicio:** 2025-01-24
 - **Fin estimado:** 2025-03-24 (8 semanas después del inicio)
-- **Progreso Global:** 45%
+- **Progreso Global:** 55%
 
 ## Leyenda de Estados
 - 🔵 **Pendiente:** Historia no iniciada
@@ -38,8 +38,8 @@
 ### Sprint 4 - Gestión de Contratos (Parte 2)
 | ID | Historia | Estado | Issue | PR | Notas |
 |----|----------|--------|-------|-----|-------|
-| HU-010 | Como usuario, quiero poder ver el detalle de un contrato | 🔵 Pendiente | - | - | |
-| HU-011 | Como usuario, quiero poder editar contratos sin pedidos | 🔵 Pendiente | - | - | |
+| HU-010 | Como usuario, quiero poder ver el detalle de un contrato | 🟢 Completada | - | - | Vista detallada con toda la información del contrato |
+| HU-011 | Como usuario, quiero poder editar contratos sin pedidos | 🟢 Completada | - | - | Validación de permisos de edición implementada |
 
 ### Sprint 5 - Gestión de Pedidos de Venta
 | ID | Historia | Estado | Issue | PR | Notas |
@@ -70,18 +70,18 @@
 | Sprint 1 | 2 | 2 | 0 | 0 | 100% |
 | Sprint 2 | 4 | 4 | 0 | 0 | 100% |
 | Sprint 3 | 3 | 3 | 0 | 0 | 100% |
-| Sprint 4 | 2 | 0 | 0 | 2 | 0% |
+| Sprint 4 | 2 | 2 | 0 | 0 | 100% |
 | Sprint 5 | 4 | 0 | 0 | 4 | 0% |
 | Sprint 6 | 2 | 0 | 0 | 2 | 0% |
 | Sprint 7 | 3 | 0 | 0 | 3 | 0% |
-| **TOTAL** | **20** | **9** | **0** | **11** | **45%** |
+| **TOTAL** | **20** | **11** | **0** | **9** | **55%** |
 
 ### Por Épica
 | Épica | Total HU | Completadas | % Completado |
 |-------|----------|-------------|--------------|
 | Autenticación | 2 | 2 | 100% |
 | Gestión de Clientes | 4 | 4 | 100% |
-| Gestión de Contratos | 5 | 3 | 60% |
+| Gestión de Contratos | 5 | 5 | 100% |
 | Gestión de Pedidos | 4 | 0 | 0% |
 | Reportes y Dashboard | 2 | 0 | 0% |
 | Configuración | 3 | 0 | 0% |
@@ -99,6 +99,29 @@
 ```
 
 ### Historial de Cambios
+
+**Fecha:** 2025-09-25
+**Historia:** HU-010 y HU-011
+**Cambio:** 🔵 Pendiente → 🟢 Completada
+**Issue:** -
+**PR:** -
+**Comentarios:** Implementación completa del sistema de gestión de contratos (Parte 2) con:
+- Componente ContractDetails con vista detallada de contratos
+- Visualización completa de información del contrato (cliente, volúmenes, fechas, progreso)
+- Lista de pedidos de venta asociados (preparada para Sprint 5)
+- Cálculo visual de progreso con barra de progreso y porcentajes
+- Hook useContractPermissions para gestión de permisos de edición/eliminación
+- Componente ContractCard refactorizado con validación de permisos en tiempo real
+- Validación de reglas de negocio mejorada (verificación real de pedidos vs. solo attendedVolume)
+- Métodos canEditContract y canDeleteContract en ContractService
+- Tooltips informativos explicando por qué no se puede editar/eliminar
+- Integración completa con Dialog modal para vista detallada
+- Formateo consistente de moneda (COP) y fechas localizadas
+- Estados visuales para diferentes tipos de estado de contrato
+- Preparación para integración futura con pedidos de venta
+- Actualización de estilos y componentes con mejores prácticas de Material-UI
+- Validaciones de TypeScript y build exitoso
+- Tests unitarios mantenidos y funcionales
 
 **Fecha:** 2025-09-24
 **Historia:** HU-007, HU-008 y HU-009
