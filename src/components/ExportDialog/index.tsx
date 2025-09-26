@@ -60,7 +60,7 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({ open, onClose }) => 
     }
   };
 
-  const convertToCSV = (data: any[], headers?: string[]): string => {
+  const convertToCSV = (data: Record<string, unknown>[], headers?: string[]): string => {
     if (data.length === 0) return '';
 
     const actualHeaders = headers || Object.keys(data[0]);

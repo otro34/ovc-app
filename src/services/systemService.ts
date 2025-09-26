@@ -66,7 +66,7 @@ export class SystemService {
   private async createDefaultConfiguration(): Promise<ISystemConfiguration> {
     try {
       const id = await db.systemConfiguration.add(this.DEFAULT_CONFIG);
-      return { ...this.DEFAULT_CONFIG, id };
+      return { ...this.DEFAULT_CONFIG, id } as ISystemConfiguration;
     } catch (error) {
       console.error('Error creando configuración por defecto:', error);
       throw new Error('Error al crear la configuración por defecto');

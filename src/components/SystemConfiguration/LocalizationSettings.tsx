@@ -6,7 +6,7 @@ import {
   Select,
   MenuItem,
   Button,
-  Grid,
+  Stack,
   Typography,
   Card,
   CardContent,
@@ -20,7 +20,7 @@ interface LocalizationSettingsProps {
     dateFormat: string;
     timeZone: string;
   };
-  onUpdate: (updates: any) => void;
+  onUpdate: (updates: { currency: string; dateFormat: string; timeZone: string }) => void;
 }
 
 const CURRENCIES = [
@@ -50,7 +50,7 @@ export const LocalizationSettings: React.FC<LocalizationSettingsProps> = ({
   const [formData, setFormData] = useState(settings);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
-  const handleInputChange = (field: string) => (event: any) => {
+  const handleInputChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { target: { value: string } }) => {
     setFormData(prev => ({
       ...prev,
       [field]: event.target.value
@@ -88,7 +88,6 @@ export const LocalizationSettings: React.FC<LocalizationSettingsProps> = ({
   };
 
   const formatDateExample = (format: string) => {
-    const date = new Date('2023-12-31');
     switch (format) {
       case 'DD/MM/YYYY':
         return '31/12/2023';
@@ -117,8 +116,11 @@ export const LocalizationSettings: React.FC<LocalizationSettingsProps> = ({
         </Alert>
       )}
 
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={4}>
+      <Stack
+        direction={{ xs: 'column', md: 'row' }}
+        spacing={3}
+      >
+        <Box sx={{ flex: 1 }}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -143,9 +145,9 @@ export const LocalizationSettings: React.FC<LocalizationSettingsProps> = ({
               </Typography>
             </CardContent>
           </Card>
-        </Grid>
+        </Box>
 
-        <Grid item xs={12} md={4}>
+        <Box sx={{ flex: 1 }}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -170,9 +172,9 @@ export const LocalizationSettings: React.FC<LocalizationSettingsProps> = ({
               </Typography>
             </CardContent>
           </Card>
-        </Grid>
+        </Box>
 
-        <Grid item xs={12} md={4}>
+        <Box sx={{ flex: 1 }}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -197,8 +199,8 @@ export const LocalizationSettings: React.FC<LocalizationSettingsProps> = ({
               </Typography>
             </CardContent>
           </Card>
-        </Grid>
-      </Grid>
+        </Box>
+      </Stack>
 
       <Alert severity="info" sx={{ mt: 3 }}>
         Los cambios de localización afectarán cómo se muestran las fechas, números y moneda

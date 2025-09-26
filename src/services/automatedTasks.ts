@@ -1,7 +1,10 @@
 import { contractService } from './contractService';
 
+// Type for Node.js timeout - using ReturnType from setTimeout
+type NodeTimeout = ReturnType<typeof setTimeout>;
+
 export class AutomatedTasksService {
-  private intervalId: NodeJS.Timeout | null = null;
+  private intervalId: NodeTimeout | null = null;
   private readonly CHECK_INTERVAL = 60 * 60 * 1000; // 1 hora en millisegundos
 
   /**

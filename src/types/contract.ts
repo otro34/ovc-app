@@ -20,6 +20,7 @@ export interface ICreateContract {
   startDate: Date;
   endDate: Date;
   status: 'active' | 'completed' | 'cancelled';
+  [key: string]: unknown;
 }
 
 export interface IUpdateContract {

@@ -9,16 +9,17 @@ import {
   Select,
   MenuItem,
   Button,
-  Grid,
+  Stack,
   Alert,
   Divider,
 } from '@mui/material';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import type { User } from '../../services/database';
+import type { CreateUserRequest, UpdateUserRequest } from '../../services/userService';
 
 interface UserFormProps {
   user: User | null;
-  onSubmit: (data: any) => void;
+  onSubmit: (data: CreateUserRequest | UpdateUserRequest) => void;
   onCancel: () => void;
 }
 
@@ -41,10 +42,10 @@ export const UserForm: React.FC<UserFormProps> = ({ user, onSubmit, onCancel }) 
     setErrors([]);
   };
 
-  const handleRoleChange = (event: any) => {
+  const handleRoleChange = (event: { target: { value: string } }) => {
     setFormData(prev => ({
       ...prev,
-      role: event.target.value
+      role: event.target.value as 'admin' | 'user'
     }));
     setErrors([]);
   };
@@ -95,16 +96,30 @@ export const UserForm: React.FC<UserFormProps> = ({ user, onSubmit, onCancel }) 
     }
 
     // Preparar datos para envío
-    const submitData: any = {
-      username: formData.username.trim(),
-      email: formData.email.trim() || undefined,
-      name: formData.name.trim() || undefined,
-      role: formData.role,
-    };
+    let submitData: CreateUserRequest | UpdateUserRequest;
 
-    // Solo incluir contraseña si se proporcionó
-    if (formData.password) {
-      submitData.password = formData.password;
+    if (user) {
+      // Editando usuario existente
+      submitData = {
+        username: formData.username.trim(),
+        email: formData.email.trim() || undefined,
+        name: formData.name.trim() || undefined,
+        role: formData.role,
+      } as UpdateUserRequest;
+    } else {
+      // Creando nuevo usuario
+      submitData = {
+        username: formData.username.trim(),
+        password: formData.password,
+        email: formData.email.trim() || undefined,
+        name: formData.name.trim() || undefined,
+        role: formData.role,
+      } as CreateUserRequest;
+    }
+
+    // Para usuarios existentes, solo incluir contraseña si se proporcionó
+    if (user && formData.password) {
+      (submitData as UpdateUserRequest & { password?: string }).password = formData.password;
     }
 
     onSubmit(submitData);
@@ -148,8 +163,8 @@ export const UserForm: React.FC<UserFormProps> = ({ user, onSubmit, onCancel }) 
           )}
 
           <form onSubmit={handleSubmit}>
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
+            <Stack spacing={3}>
+              <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
                 <TextField
                   fullWidth
                   label="Nombre de usuario"
@@ -158,9 +173,7 @@ export const UserForm: React.FC<UserFormProps> = ({ user, onSubmit, onCancel }) 
                   required
                   helperText="Solo letras, números y guiones bajos"
                 />
-              </Grid>
 
-              <Grid item xs={12} md={6}>
                 <FormControl fullWidth required>
                   <InputLabel>Rol</InputLabel>
                   <Select
@@ -172,25 +185,21 @@ export const UserForm: React.FC<UserFormProps> = ({ user, onSubmit, onCancel }) 
                     <MenuItem value="admin">Administrador</MenuItem>
                   </Select>
                 </FormControl>
-              </Grid>
+              </Stack>
 
-              <Grid item xs={12}>
-                <Divider />
-                <Typography variant="h6" sx={{ mt: 2, mb: 2 }}>
-                  Información Personal
-                </Typography>
-              </Grid>
+              <Divider />
+              <Typography variant="h6">
+                Información Personal
+              </Typography>
 
-              <Grid item xs={12} md={6}>
+              <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
                 <TextField
                   fullWidth
                   label="Nombre completo"
                   value={formData.name}
                   onChange={handleInputChange('name')}
                 />
-              </Grid>
 
-              <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
                   label="Email"
@@ -198,16 +207,14 @@ export const UserForm: React.FC<UserFormProps> = ({ user, onSubmit, onCancel }) 
                   value={formData.email}
                   onChange={handleInputChange('email')}
                 />
-              </Grid>
+              </Stack>
 
-              <Grid item xs={12}>
-                <Divider />
-                <Typography variant="h6" sx={{ mt: 2, mb: 2 }}>
-                  {isEditing ? 'Cambiar Contraseña (opcional)' : 'Contraseña'}
-                </Typography>
-              </Grid>
+              <Divider />
+              <Typography variant="h6">
+                {isEditing ? 'Cambiar Contraseña (opcional)' : 'Contraseña'}
+              </Typography>
 
-              <Grid item xs={12} md={6}>
+              <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
                 <TextField
                   fullWidth
                   label="Contraseña"
@@ -221,19 +228,17 @@ export const UserForm: React.FC<UserFormProps> = ({ user, onSubmit, onCancel }) 
                       : "Mínimo 6 caracteres"
                   }
                 />
-              </Grid>
+              </Stack>
 
               {isEditing && (
-                <Grid item xs={12}>
-                  <Alert severity="info">
-                    <Typography variant="body2">
-                      <strong>Nota:</strong> Para cambiar la contraseña de manera más segura,
-                      utilice la opción "Cambiar contraseña" desde la lista de usuarios.
-                    </Typography>
-                  </Alert>
-                </Grid>
+                <Alert severity="info">
+                  <Typography variant="body2">
+                    <strong>Nota:</strong> Para cambiar la contraseña de manera más segura,
+                    utilice la opción "Cambiar contraseña" desde la lista de usuarios.
+                  </Typography>
+                </Alert>
               )}
-            </Grid>
+            </Stack>
 
             <Box sx={{ mt: 4, display: 'flex', gap: 2 }}>
               <Button

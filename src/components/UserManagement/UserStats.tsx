@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   Box,
-  Grid,
+  Stack,
   Card,
   CardContent,
   Typography,
@@ -62,9 +62,13 @@ export const UserStats: React.FC<UserStatsProps> = ({ users }) => {
   ];
 
   return (
-    <Grid container spacing={2}>
+    <Stack
+      direction={{ xs: 'column', sm: 'row' }}
+      spacing={2}
+      sx={{ flexWrap: 'wrap' }}
+    >
       {statsCards.map((card, index) => (
-        <Grid item xs={12} sm={6} md={3} key={index}>
+        <Box key={index} sx={{ flex: { xs: '1 1 100%', sm: '1 1 50%', md: '1 1 25%' }, minWidth: 0 }}>
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -94,8 +98,8 @@ export const UserStats: React.FC<UserStatsProps> = ({ users }) => {
               </Box>
             </CardContent>
           </Card>
-        </Grid>
+        </Box>
       ))}
-    </Grid>
+    </Stack>
   );
 };
