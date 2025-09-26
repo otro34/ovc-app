@@ -15,7 +15,7 @@ interface NotificationSettingsProps {
   settings: {
     emailNotifications: boolean;
   };
-  onUpdate: (updates: any) => void;
+  onUpdate: (updates: { emailNotifications: boolean }) => void;
 }
 
 export const NotificationSettings: React.FC<NotificationSettingsProps> = ({

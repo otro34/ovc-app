@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import {
   Container,
@@ -71,21 +71,39 @@ export default function PurchaseOrders() {
   });
   const [refreshKey, setRefreshKey] = useState(0);
 
+  const handleCancelOrder = useCallback(async (orderId: number) => {
+    try {
+      const order = await purchaseOrderService.getPurchaseOrderById(orderId);
+      if (order) {
+        setCancelDialog({ open: true, order });
+      }
+    } catch (error) {
+      console.error('Error loading order for cancellation:', error);
+    }
+  }, []);
+
   // Manejar navegación desde contrato details
   useEffect(() => {
     const state = location.state as {
       preselectedContractId?: number;
       openForm?: boolean;
+      cancelOrderId?: number;
+      fromContract?: boolean;
     };
 
     if (state?.preselectedContractId && state?.openForm) {
       setPreselectedContractId(state.preselectedContractId);
       setShowForm(true);
+    } else if (state?.cancelOrderId && state?.fromContract) {
+      // Handle cancel order action from contract details
+      handleCancelOrder(state.cancelOrderId);
+    }
 
-      // Limpiar el estado para evitar reapertura
+    // Limpiar el estado para evitar reapertura
+    if (state) {
       window.history.replaceState({}, document.title);
     }
-  }, [location.state]);
+  }, [location.state, handleCancelOrder]);
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
@@ -104,17 +122,6 @@ export default function PurchaseOrders() {
 
   const handleFormSuccess = () => {
     setRefreshKey(prev => prev + 1);
-  };
-
-  const handleCancelOrder = async (orderId: number) => {
-    try {
-      const order = await purchaseOrderService.getPurchaseOrderById(orderId);
-      if (order) {
-        setCancelDialog({ open: true, order });
-      }
-    } catch (error) {
-      console.error('Error loading order for cancellation:', error);
-    }
   };
 
   const handleCancelDialogClose = () => {
@@ -169,14 +176,14 @@ export default function PurchaseOrders() {
     }
   };
 
-  const handleStatusChange = async (orderId: number, action: string, data?: any) => {
+  const handleStatusChange = async (orderId: number, action: string, data?: { deliveryDate?: Date; reason?: string }) => {
     try {
       switch (action) {
         case 'deliver':
-          await purchaseOrderService.markAsDelivered(orderId, data.deliveryDate);
+          await purchaseOrderService.markAsDelivered(orderId, data?.deliveryDate);
           break;
         case 'cancel':
-          await purchaseOrderService.markAsCancelled(orderId, data.reason);
+          await purchaseOrderService.markAsCancelled(orderId, data?.reason);
           break;
         case 'reactivate':
           await purchaseOrderService.reactivateOrder(orderId);

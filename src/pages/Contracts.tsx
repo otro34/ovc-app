@@ -221,8 +221,13 @@ const Contracts: React.FC = () => {
   };
 
   const handleCancelOrderFromDetails = (orderId: number) => {
-    // TODO: Implementar cancelación de pedidos desde detalles de contrato
-    console.log('Cancel order:', orderId);
+    // Navigate to purchase orders page with cancel action
+    navigate('/dashboard/pedidos', {
+      state: {
+        cancelOrderId: orderId,
+        fromContract: true
+      }
+    });
   };
 
   const getFormInitialData = (): IContractFormData | undefined => {

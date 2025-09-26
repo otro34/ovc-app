@@ -18,7 +18,7 @@ export interface IPurchaseOrderCreate {
   volume: number;
   price: number;
   orderDate: Date;
-  deliveryDate?: Date;
+  deliveryDate?: Date | null;
   notes?: string;
 }
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Paper,
@@ -6,13 +6,12 @@ import {
   Button,
   Alert,
   Snackbar,
-  Grid,
-  Card,
-  CardContent,
+  Stack,
 } from '@mui/material';
-import { Add as AddIcon, People as PeopleIcon, AdminPanelSettings } from '@mui/icons-material';
+import { Add as AddIcon } from '@mui/icons-material';
 import { userService } from '../../services/userService';
 import type { User } from '../../services/database';
+import type { CreateUserRequest, UpdateUserRequest } from '../../services/userService';
 import { UserList } from './UserList';
 import { UserForm } from './UserForm';
 import { UserStats } from './UserStats';
@@ -31,11 +30,7 @@ export const UserManagement: React.FC = () => {
     severity: 'success' | 'error';
   }>({ open: false, message: '', severity: 'success' });
 
-  useEffect(() => {
-    loadUsers();
-  }, []);
-
-  const loadUsers = async () => {
+  const loadUsers = useCallback(async () => {
     try {
       setLoading(true);
       const userList = await userService.getAllUsers();
@@ -46,7 +41,11 @@ export const UserManagement: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadUsers();
+  }, [loadUsers]);
 
   const handleCreateUser = () => {
     setEditingUser(null);
@@ -76,13 +75,13 @@ export const UserManagement: React.FC = () => {
     }
   };
 
-  const handleFormSubmit = async (formData: any) => {
+  const handleFormSubmit = async (formData: CreateUserRequest | UpdateUserRequest) => {
     try {
       if (editingUser) {
-        await userService.updateUser(editingUser.id!, formData);
+        await userService.updateUser(editingUser.id!, formData as UpdateUserRequest);
         showNotification('Usuario actualizado correctamente', 'success');
       } else {
-        await userService.createUser(formData);
+        await userService.createUser(formData as CreateUserRequest);
         showNotification('Usuario creado correctamente', 'success');
       }
 
@@ -163,22 +162,18 @@ export const UserManagement: React.FC = () => {
         </Box>
       </Paper>
 
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <UserStats users={users} />
-        </Grid>
+      <Stack spacing={3}>
+        <UserStats users={users} />
 
-        <Grid item xs={12}>
-          <UserList
-            users={users}
-            loading={loading}
-            onEdit={handleEditUser}
-            onDelete={handleDeleteUser}
-            onChangePassword={handleChangePassword}
-            onRefresh={loadUsers}
-          />
-        </Grid>
-      </Grid>
+        <UserList
+          users={users}
+          loading={loading}
+          onEdit={handleEditUser}
+          onDelete={handleDeleteUser}
+          onChangePassword={handleChangePassword}
+          onRefresh={loadUsers}
+        />
+      </Stack>
 
       {showPasswordDialog && passwordChangeUser && (
         <PasswordChangeDialog

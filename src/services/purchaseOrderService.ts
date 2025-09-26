@@ -1,5 +1,6 @@
 import { db, type PurchaseOrder } from './database';
 import type { IPurchaseOrder, IPurchaseOrderCreate, IPurchaseOrderUpdate, IPurchaseOrderWithContract, IPurchaseOrderStats } from '../types/purchaseOrder';
+import { contractService } from './contractService';
 
 export class PurchaseOrderService {
   async getAllPurchaseOrders(): Promise<IPurchaseOrderWithContract[]> {
@@ -58,6 +59,7 @@ export class PurchaseOrderService {
     const now = new Date();
     const purchaseOrder: PurchaseOrder = {
       ...purchaseOrderData,
+      deliveryDate: purchaseOrderData.deliveryDate || undefined,
       status: 'pending',
       createdAt: now,
       updatedAt: now
@@ -232,7 +234,7 @@ export class PurchaseOrderService {
     return order.status === 'pending';
   }
 
-  canDeleteOrder(_order: IPurchaseOrder): boolean {
+  canDeleteOrder(): boolean {
     return true; // Se puede eliminar cualquier pedido, con las validaciones correspondientes
   }
 
@@ -259,7 +261,6 @@ export class PurchaseOrderService {
     await db.purchaseOrders.update(orderId, updatedOrder);
 
     // Actualizar estado del contrato
-    const { contractService } = await import('./contractService');
     await contractService.updateContractStatus(order.contractId);
 
     return updatedOrder;
@@ -278,17 +279,46 @@ export class PurchaseOrderService {
       throw new Error('Solo se pueden cancelar pedidos pendientes');
     }
 
-    // Restaurar volumen en el contrato
+    // Verificar el estado actual del contrato antes de cancelar
     const contract = await db.contracts.get(order.contractId);
-    if (contract) {
-      const updatedContract = {
-        ...contract,
-        attendedVolume: Math.max(0, contract.attendedVolume - order.volume),
-        pendingVolume: contract.pendingVolume + order.volume,
-        updatedAt: new Date()
-      };
-      await db.contracts.update(order.contractId, updatedContract);
+    if (!contract) {
+      throw new Error('Contrato no encontrado');
     }
+
+    console.log('Cancelando pedido:', {
+      orderId,
+      orderVolume: order.volume,
+      contractAttendedVolume: contract.attendedVolume,
+      contractPendingVolume: contract.pendingVolume,
+      contractTotalVolume: contract.totalVolume
+    });
+
+    // Verificar si hay suficiente volumen atendido para cancelar
+    if (contract.attendedVolume < order.volume) {
+      console.warn(`Inconsistencia de datos detectada. Reparando automáticamente...`);
+
+      // Reparar la inconsistencia: recalcular los volúmenes basado en pedidos reales
+      await this.repairContractVolumes(order.contractId);
+
+      // Obtener el contrato actualizado después de la reparación
+      const repairedContract = await db.contracts.get(order.contractId);
+      if (!repairedContract) {
+        throw new Error('Error al obtener el contrato reparado');
+      }
+
+      console.log('Volúmenes después de reparación:', {
+        contractAttendedVolume: repairedContract.attendedVolume,
+        contractPendingVolume: repairedContract.pendingVolume,
+      });
+
+      // Verificar nuevamente después de la reparación
+      if (repairedContract.attendedVolume < order.volume) {
+        throw new Error(`Error persistente: El contrato reparado tiene volumen atendido ${repairedContract.attendedVolume} pero el pedido a cancelar tiene volumen ${order.volume}.`);
+      }
+    }
+
+    // Restaurar el volumen al contrato usando el método del servicio
+    await contractService.updateContractVolumes(order.contractId, order.volume, 'subtract');
 
     const updatedOrder: IPurchaseOrder = {
       ...order,
@@ -300,10 +330,53 @@ export class PurchaseOrderService {
     await db.purchaseOrders.update(orderId, updatedOrder);
 
     // Actualizar estado del contrato
-    const { contractService } = await import('./contractService');
     await contractService.updateContractStatus(order.contractId);
 
     return updatedOrder;
+  }
+
+  /**
+   * Repara inconsistencias en los volúmenes del contrato recalculando desde los pedidos reales
+   */
+  async repairContractVolumes(contractId: number): Promise<void> {
+    try {
+      const contract = await db.contracts.get(contractId);
+      if (!contract) {
+        throw new Error('Contrato no encontrado');
+      }
+
+      // Obtener todos los pedidos activos (no cancelados) del contrato
+      const activeOrders = await db.purchaseOrders
+        .where('contractId')
+        .equals(contractId)
+        .filter(order => order.status === 'pending' || order.status === 'delivered')
+        .toArray();
+
+      // Calcular el volumen atendido real basado en pedidos activos
+      const realAttendedVolume = activeOrders.reduce((total, order) => total + order.volume, 0);
+      const realPendingVolume = contract.totalVolume - realAttendedVolume;
+
+      console.log('Reparación de volúmenes:', {
+        contractId,
+        currentAttended: contract.attendedVolume,
+        currentPending: contract.pendingVolume,
+        calculatedAttended: realAttendedVolume,
+        calculatedPending: realPendingVolume,
+        totalVolume: contract.totalVolume,
+        activeOrders: activeOrders.length
+      });
+
+      // Actualizar el contrato con los volúmenes correctos
+      await db.contracts.update(contractId, {
+        attendedVolume: realAttendedVolume,
+        pendingVolume: realPendingVolume,
+        updatedAt: new Date()
+      });
+
+    } catch (error) {
+      console.error('Error reparando volúmenes del contrato:', error);
+      throw error;
+    }
   }
 
   /**
@@ -349,7 +422,6 @@ export class PurchaseOrderService {
     await db.purchaseOrders.update(orderId, updatedOrder);
 
     // Actualizar estado del contrato
-    const { contractService } = await import('./contractService');
     await contractService.updateContractStatus(order.contractId);
 
     return updatedOrder;

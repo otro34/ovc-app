@@ -25,7 +25,7 @@ interface OrderStatusDialogProps {
   order: IPurchaseOrder;
   open: boolean;
   onClose: () => void;
-  onStatusChange: (orderId: number, newStatus: string, data?: any) => void;
+  onStatusChange: (orderId: number, newStatus: string, data?: { deliveryDate?: Date; reason?: string }) => void;
 }
 
 type StatusAction = 'deliver' | 'cancel' | 'reactivate';
@@ -95,7 +95,7 @@ export const OrderStatusDialog: React.FC<OrderStatusDialogProps> = ({
     setLoading(true);
 
     try {
-      let data: any = {};
+      const data: { deliveryDate?: Date; reason?: string } = {};
 
       switch (action) {
         case 'deliver':

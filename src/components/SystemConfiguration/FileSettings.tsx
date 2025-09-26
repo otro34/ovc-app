@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {
   Box,
   Button,
-  Grid,
+  Stack,
   Typography,
   Card,
   CardContent,
@@ -121,8 +121,8 @@ export const FileSettings: React.FC<FileSettingsProps> = ({
         </Alert>
       )}
 
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
+      <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
+        <Box sx={{ flex: 1 }}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -156,9 +156,9 @@ export const FileSettings: React.FC<FileSettingsProps> = ({
               </Alert>
             </CardContent>
           </Card>
-        </Grid>
+        </Box>
 
-        <Grid item xs={12} md={6}>
+        <Box sx={{ flex: 1 }}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -226,8 +226,8 @@ export const FileSettings: React.FC<FileSettingsProps> = ({
               </Box>
             </CardContent>
           </Card>
-        </Grid>
-      </Grid>
+        </Box>
+      </Stack>
 
       <Alert severity="warning" sx={{ mt: 3 }}>
         Cambiar estos parámetros puede afectar la funcionalidad de carga de archivos existente.

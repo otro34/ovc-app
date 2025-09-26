@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Paper,
@@ -46,11 +46,7 @@ export const ContractOrdersList: React.FC<ContractOrdersListProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadContractAndOrders();
-  }, [contractId]);
-
-  const loadContractAndOrders = async () => {
+  const loadContractAndOrders = useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -72,7 +68,11 @@ export const ContractOrdersList: React.FC<ContractOrdersListProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [contractId]);
+
+  useEffect(() => {
+    loadContractAndOrders();
+  }, [loadContractAndOrders]);
 
   const getStatusColor = (status: string) => {
     switch (status) {

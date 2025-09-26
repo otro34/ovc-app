@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Paper,
@@ -27,7 +27,6 @@ import {
   Visibility as VisibilityIcon,
   Edit as EditIcon,
   Cancel as CancelIcon,
-  CheckCircle as DeliveredIcon,
   Assignment as StatusIcon
 } from '@mui/icons-material';
 import { format } from 'date-fns';
@@ -63,15 +62,7 @@ export const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedOrder, setSelectedOrder] = useState<IPurchaseOrderWithContract | null>(null);
 
-  useEffect(() => {
-    loadOrders();
-  }, [contractId]);
-
-  useEffect(() => {
-    filterOrders();
-  }, [orders, searchTerm]);
-
-  const loadOrders = async () => {
+  const loadOrders = useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -93,9 +84,9 @@ export const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [contractId]);
 
-  const filterOrders = () => {
+  const filterOrders = useCallback(() => {
     if (!searchTerm) {
       setFilteredOrders(orders);
       return;
@@ -110,7 +101,15 @@ export const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({
 
     setFilteredOrders(filtered);
     setPage(0);
-  };
+  }, [orders, searchTerm]);
+
+  useEffect(() => {
+    loadOrders();
+  }, [loadOrders]);
+
+  useEffect(() => {
+    filterOrders();
+  }, [filterOrders]);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, order: IPurchaseOrderWithContract) => {
     setAnchorEl(event.currentTarget);

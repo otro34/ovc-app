@@ -20,7 +20,7 @@ interface BackupSettingsProps {
     backupEnabled: boolean;
     backupFrequency: 'daily' | 'weekly' | 'monthly';
   };
-  onUpdate: (updates: any) => void;
+  onUpdate: (updates: { backupEnabled: boolean; backupFrequency: 'daily' | 'weekly' | 'monthly' }) => void;
 }
 
 export const BackupSettings: React.FC<BackupSettingsProps> = ({
@@ -29,8 +29,9 @@ export const BackupSettings: React.FC<BackupSettingsProps> = ({
 }) => {
   const [formData, setFormData] = useState(settings);
 
-  const handleInputChange = (field: string) => (event: any) => {
-    const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
+  const handleInputChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement> | { target: { value: string } }) => {
+    const target = event.target as HTMLInputElement;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
     setFormData(prev => ({
       ...prev,
       [field]: value
