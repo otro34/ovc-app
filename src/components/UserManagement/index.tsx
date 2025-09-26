@@ -6,7 +6,7 @@ import {
   Button,
   Alert,
   Snackbar,
-  Grid,
+  Stack,
 } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
 import { userService } from '../../services/userService';
@@ -162,22 +162,18 @@ export const UserManagement: React.FC = () => {
         </Box>
       </Paper>
 
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <UserStats users={users} />
-        </Grid>
+      <Stack spacing={3}>
+        <UserStats users={users} />
 
-        <Grid item xs={12}>
-          <UserList
-            users={users}
-            loading={loading}
-            onEdit={handleEditUser}
-            onDelete={handleDeleteUser}
-            onChangePassword={handleChangePassword}
-            onRefresh={loadUsers}
-          />
-        </Grid>
-      </Grid>
+        <UserList
+          users={users}
+          loading={loading}
+          onEdit={handleEditUser}
+          onDelete={handleDeleteUser}
+          onChangePassword={handleChangePassword}
+          onRefresh={loadUsers}
+        />
+      </Stack>
 
       {showPasswordDialog && passwordChangeUser && (
         <PasswordChangeDialog

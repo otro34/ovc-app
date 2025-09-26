@@ -14,6 +14,7 @@ export interface ISystemConfiguration {
   systemMaintenanceMode: boolean;
   createdAt?: Date;
   updatedAt?: Date;
+  [key: string]: any; // Index signature for flexibility
 }
 
 export interface ISystemSettings {

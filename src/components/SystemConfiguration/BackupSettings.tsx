@@ -29,8 +29,8 @@ export const BackupSettings: React.FC<BackupSettingsProps> = ({
 }) => {
   const [formData, setFormData] = useState(settings);
 
-  const handleInputChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | React.ChangeEvent<{ value: string }>) => {
-    const target = event.target as HTMLInputElement;
+  const handleInputChange = (field: string) => (event: any) => {
+    const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     setFormData(prev => ({
       ...prev,

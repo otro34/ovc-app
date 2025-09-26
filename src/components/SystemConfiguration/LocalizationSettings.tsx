@@ -6,7 +6,7 @@ import {
   Select,
   MenuItem,
   Button,
-  Grid,
+  Stack,
   Typography,
   Card,
   CardContent,
@@ -116,8 +116,11 @@ export const LocalizationSettings: React.FC<LocalizationSettingsProps> = ({
         </Alert>
       )}
 
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={4}>
+      <Stack
+        direction={{ xs: 'column', md: 'row' }}
+        spacing={3}
+      >
+        <Box sx={{ flex: 1 }}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -142,9 +145,9 @@ export const LocalizationSettings: React.FC<LocalizationSettingsProps> = ({
               </Typography>
             </CardContent>
           </Card>
-        </Grid>
+        </Box>
 
-        <Grid item xs={12} md={4}>
+        <Box sx={{ flex: 1 }}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -169,9 +172,9 @@ export const LocalizationSettings: React.FC<LocalizationSettingsProps> = ({
               </Typography>
             </CardContent>
           </Card>
-        </Grid>
+        </Box>
 
-        <Grid item xs={12} md={4}>
+        <Box sx={{ flex: 1 }}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -196,8 +199,8 @@ export const LocalizationSettings: React.FC<LocalizationSettingsProps> = ({
               </Typography>
             </CardContent>
           </Card>
-        </Grid>
-      </Grid>
+        </Box>
+      </Stack>
 
       <Alert severity="info" sx={{ mt: 3 }}>
         Los cambios de localización afectarán cómo se muestran las fechas, números y moneda

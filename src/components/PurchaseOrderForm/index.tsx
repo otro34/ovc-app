@@ -170,7 +170,7 @@ export const PurchaseOrderForm: React.FC<PurchaseOrderFormProps> = ({
     }
   }, [contractId, contracts, setValue, isEditMode]);
 
-  const onSubmit = async (data: IPurchaseOrderCreate) => {
+  const onSubmit = async (data: any) => {
     if (!isValid) return;
 
     setLoading(true);
@@ -183,7 +183,7 @@ export const PurchaseOrderForm: React.FC<PurchaseOrderFormProps> = ({
           volume: data.volume,
           price: data.price,
           orderDate: data.orderDate,
-          deliveryDate: data.deliveryDate,
+          deliveryDate: data.deliveryDate || undefined,
           notes: data.notes || undefined
         };
 
