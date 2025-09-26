@@ -165,12 +165,6 @@ Example:
 feat(contracts): implement volume validation [HU-007] #123
 ```
 
-### Git Configuration
-```bash
-git config user.email "otro34@hotmail.com"
-git config user.name "Juan Carlos Romaina"
-```
-
 ## 📈 Implementation Phases
 
 1. **Phase 1**: Base setup and authentication
@@ -201,7 +195,7 @@ git config user.name "Juan Carlos Romaina"
 
 ## 📄 License
 
-[License information to be added]
+MIT
 
 ---
 
