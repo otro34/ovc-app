@@ -1,5 +1,6 @@
 import { db, type PurchaseOrder } from './database';
 import type { IPurchaseOrder, IPurchaseOrderCreate, IPurchaseOrderUpdate, IPurchaseOrderWithContract, IPurchaseOrderStats } from '../types/purchaseOrder';
+import { contractService } from './contractService';
 
 export class PurchaseOrderService {
   async getAllPurchaseOrders(): Promise<IPurchaseOrderWithContract[]> {
@@ -259,7 +260,6 @@ export class PurchaseOrderService {
     await db.purchaseOrders.update(orderId, updatedOrder);
 
     // Actualizar estado del contrato
-    const { contractService } = await import('./contractService');
     await contractService.updateContractStatus(order.contractId);
 
     return updatedOrder;
@@ -300,7 +300,6 @@ export class PurchaseOrderService {
     await db.purchaseOrders.update(orderId, updatedOrder);
 
     // Actualizar estado del contrato
-    const { contractService } = await import('./contractService');
     await contractService.updateContractStatus(order.contractId);
 
     return updatedOrder;
@@ -349,7 +348,6 @@ export class PurchaseOrderService {
     await db.purchaseOrders.update(orderId, updatedOrder);
 
     // Actualizar estado del contrato
-    const { contractService } = await import('./contractService');
     await contractService.updateContractStatus(order.contractId);
 
     return updatedOrder;

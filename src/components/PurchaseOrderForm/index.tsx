@@ -195,7 +195,7 @@ export const PurchaseOrderForm: React.FC<PurchaseOrderFormProps> = ({
           volume: data.volume,
           price: data.price,
           orderDate: data.orderDate,
-          deliveryDate: data.deliveryDate,
+          deliveryDate: data.deliveryDate || undefined,
           notes: data.notes || undefined
         };
 
