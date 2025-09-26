@@ -3,7 +3,7 @@
 ## Estado General del Proyecto
 - **Inicio:** 2025-01-24
 - **Fin estimado:** 2025-03-24 (8 semanas después del inicio)
-- **Progreso Global:** 75%
+- **Progreso Global:** 85%
 
 ## Leyenda de Estados
 - 🔵 **Pendiente:** Historia no iniciada
@@ -52,8 +52,8 @@
 ### Sprint 6 - Dashboard y Reportes
 | ID | Historia | Estado | Issue | PR | Notas |
 |----|----------|--------|-------|-----|-------|
-| HU-016 | Como usuario, quiero ver dashboard con métricas | 🔵 Pendiente | - | - | |
-| HU-017 | Como usuario, quiero poder exportar información | 🔵 Pendiente | - | - | |
+| HU-016 | Como usuario, quiero ver dashboard con métricas | 🟢 Completada | - | - | Dashboard completo con métricas en tiempo real |
+| HU-017 | Como usuario, quiero poder exportar información | 🟢 Completada | - | - | Exportación en JSON y CSV implementada |
 
 ### Sprint 7 - Configuración y Administración
 | ID | Historia | Estado | Issue | PR | Notas |
@@ -72,9 +72,9 @@
 | Sprint 3 | 3 | 3 | 0 | 0 | 100% |
 | Sprint 4 | 2 | 2 | 0 | 0 | 100% |
 | Sprint 5 | 4 | 4 | 0 | 0 | 100% |
-| Sprint 6 | 2 | 0 | 0 | 2 | 0% |
+| Sprint 6 | 2 | 2 | 0 | 0 | 100% |
 | Sprint 7 | 3 | 0 | 0 | 3 | 0% |
-| **TOTAL** | **20** | **15** | **0** | **5** | **75%** |
+| **TOTAL** | **20** | **17** | **0** | **3** | **85%** |
 
 ### Por Épica
 | Épica | Total HU | Completadas | % Completado |
@@ -83,7 +83,7 @@
 | Gestión de Clientes | 4 | 4 | 100% |
 | Gestión de Contratos | 5 | 5 | 100% |
 | Gestión de Pedidos | 4 | 4 | 100% |
-| Reportes y Dashboard | 2 | 0 | 0% |
+| Reportes y Dashboard | 2 | 2 | 100% |
 | Configuración | 3 | 0 | 0% |
 
 ## Registro de Cambios
@@ -99,6 +99,31 @@
 ```
 
 ### Historial de Cambios
+
+**Fecha:** 2025-09-25
+**Historia:** HU-016 y HU-017
+**Cambio:** 🔵 Pendiente → 🟢 Completada
+**Issue:** -
+**PR:** -
+**Comentarios:** Implementación completa del sistema de Dashboard y Reportes (Sprint 6) con:
+- Servicio DashboardService con agregación de datos y cálculo de métricas
+- Dashboard completo con métricas en tiempo real:
+  * Tarjetas principales: Clientes Activos, Contratos Vigentes, Pedidos del Mes, Volumen Pendiente
+  * Métricas financieras: Valor Total de Contratos, Ingresos del Mes, Valor Promedio por Pedido
+  * Indicadores operativos: Volumen Atendido, Pedidos Pendientes, Tasa de Cumplimiento con barra de progreso
+  * Actividad reciente: Contratos y pedidos más recientes con información detallada
+- Componente ExportDialog para exportación avanzada de datos:
+  * Soporte para formatos JSON y CSV
+  * Exportación selectiva por tipo de datos (clientes, contratos, pedidos, o todo)
+  * Descarga automática con timestamp en nombre de archivo
+  * Manejo de errores y estados de carga
+- Integración completa con todos los servicios existentes
+- Cálculos automáticos de tendencias mensuales y métricas agregadas
+- Formateo localizado de moneda (COP) y fechas
+- Manejo de estados de carga y errores
+- Interfaz responsiva con Material-UI
+- Validaciones de TypeScript y build exitoso
+- Tests unitarios mantenidos y funcionales
 
 **Fecha:** 2025-09-25
 **Historia:** HU-012, HU-013, HU-014 y HU-015
