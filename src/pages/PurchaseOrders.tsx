@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import {
   Container,
@@ -76,16 +76,23 @@ export default function PurchaseOrders() {
     const state = location.state as {
       preselectedContractId?: number;
       openForm?: boolean;
+      cancelOrderId?: number;
+      fromContract?: boolean;
     };
 
     if (state?.preselectedContractId && state?.openForm) {
       setPreselectedContractId(state.preselectedContractId);
       setShowForm(true);
+    } else if (state?.cancelOrderId && state?.fromContract) {
+      // Handle cancel order action from contract details
+      handleCancelOrder(state.cancelOrderId);
+    }
 
-      // Limpiar el estado para evitar reapertura
+    // Limpiar el estado para evitar reapertura
+    if (state) {
       window.history.replaceState({}, document.title);
     }
-  }, [location.state]);
+  }, [location.state, handleCancelOrder]);
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
@@ -106,7 +113,7 @@ export default function PurchaseOrders() {
     setRefreshKey(prev => prev + 1);
   };
 
-  const handleCancelOrder = async (orderId: number) => {
+  const handleCancelOrder = useCallback(async (orderId: number) => {
     try {
       const order = await purchaseOrderService.getPurchaseOrderById(orderId);
       if (order) {
@@ -115,7 +122,7 @@ export default function PurchaseOrders() {
     } catch (error) {
       console.error('Error loading order for cancellation:', error);
     }
-  };
+  }, []);
 
   const handleCancelDialogClose = () => {
     setCancelDialog({ open: false, order: null });
