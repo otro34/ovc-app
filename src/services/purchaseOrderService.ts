@@ -294,7 +294,26 @@ export class PurchaseOrderService {
 
     // Verificar si hay suficiente volumen atendido para cancelar
     if (contract.attendedVolume < order.volume) {
-      throw new Error(`Error de inconsistencia: El contrato tiene volumen atendido ${contract.attendedVolume} pero el pedido a cancelar tiene volumen ${order.volume}. Esto sugiere un problema de sincronización de datos.`);
+      console.warn(`Inconsistencia de datos detectada. Reparando automáticamente...`);
+
+      // Reparar la inconsistencia: recalcular los volúmenes basado en pedidos reales
+      await this.repairContractVolumes(order.contractId);
+
+      // Obtener el contrato actualizado después de la reparación
+      const repairedContract = await db.contracts.get(order.contractId);
+      if (!repairedContract) {
+        throw new Error('Error al obtener el contrato reparado');
+      }
+
+      console.log('Volúmenes después de reparación:', {
+        contractAttendedVolume: repairedContract.attendedVolume,
+        contractPendingVolume: repairedContract.pendingVolume,
+      });
+
+      // Verificar nuevamente después de la reparación
+      if (repairedContract.attendedVolume < order.volume) {
+        throw new Error(`Error persistente: El contrato reparado tiene volumen atendido ${repairedContract.attendedVolume} pero el pedido a cancelar tiene volumen ${order.volume}.`);
+      }
     }
 
     // Restaurar el volumen al contrato usando el método del servicio
@@ -313,6 +332,50 @@ export class PurchaseOrderService {
     await contractService.updateContractStatus(order.contractId);
 
     return updatedOrder;
+  }
+
+  /**
+   * Repara inconsistencias en los volúmenes del contrato recalculando desde los pedidos reales
+   */
+  async repairContractVolumes(contractId: number): Promise<void> {
+    try {
+      const contract = await db.contracts.get(contractId);
+      if (!contract) {
+        throw new Error('Contrato no encontrado');
+      }
+
+      // Obtener todos los pedidos activos (no cancelados) del contrato
+      const activeOrders = await db.purchaseOrders
+        .where('contractId')
+        .equals(contractId)
+        .filter(order => order.status === 'pending' || order.status === 'delivered')
+        .toArray();
+
+      // Calcular el volumen atendido real basado en pedidos activos
+      const realAttendedVolume = activeOrders.reduce((total, order) => total + order.volume, 0);
+      const realPendingVolume = contract.totalVolume - realAttendedVolume;
+
+      console.log('Reparación de volúmenes:', {
+        contractId,
+        currentAttended: contract.attendedVolume,
+        currentPending: contract.pendingVolume,
+        calculatedAttended: realAttendedVolume,
+        calculatedPending: realPendingVolume,
+        totalVolume: contract.totalVolume,
+        activeOrders: activeOrders.length
+      });
+
+      // Actualizar el contrato con los volúmenes correctos
+      await db.contracts.update(contractId, {
+        attendedVolume: realAttendedVolume,
+        pendingVolume: realPendingVolume,
+        updatedAt: new Date()
+      });
+
+    } catch (error) {
+      console.error('Error reparando volúmenes del contrato:', error);
+      throw error;
+    }
   }
 
   /**
