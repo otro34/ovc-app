@@ -278,6 +278,25 @@ export class PurchaseOrderService {
       throw new Error('Solo se pueden cancelar pedidos pendientes');
     }
 
+    // Verificar el estado actual del contrato antes de cancelar
+    const contract = await db.contracts.get(order.contractId);
+    if (!contract) {
+      throw new Error('Contrato no encontrado');
+    }
+
+    console.log('Cancelando pedido:', {
+      orderId,
+      orderVolume: order.volume,
+      contractAttendedVolume: contract.attendedVolume,
+      contractPendingVolume: contract.pendingVolume,
+      contractTotalVolume: contract.totalVolume
+    });
+
+    // Verificar si hay suficiente volumen atendido para cancelar
+    if (contract.attendedVolume < order.volume) {
+      throw new Error(`Error de inconsistencia: El contrato tiene volumen atendido ${contract.attendedVolume} pero el pedido a cancelar tiene volumen ${order.volume}. Esto sugiere un problema de sincronización de datos.`);
+    }
+
     // Restaurar el volumen al contrato usando el método del servicio
     await contractService.updateContractVolumes(order.contractId, order.volume, 'subtract');
 
