@@ -1,3 +1,5 @@
+[![CI/CD Pipeline](https://github.com/otro34/ovc-app/actions/workflows/ci.yml/badge.svg)](https://github.com/otro34/ovc-app/actions/workflows/ci.yml)
+
 # OV-APP - Sales Contract & Purchase Order Management System
 
 A comprehensive sales contract and purchase order management system designed for a palm oil company. The application provides complete lifecycle management of client contracts with automatic volume tracking and purchase order processing.
