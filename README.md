@@ -1,4 +1,9 @@
-[![CI/CD Pipeline](https://github.com/otro34/ovc-app/actions/workflows/ci.yml/badge.svg)](https://github.com/otro34/ovc-app/actions/workflows/ci.yml)
+[![CI/CD Pipeline](https://github.com/otro34/ovc-app/actions/workflows/ci.yml/badge.svg)](https://github.com/otro34/ovc-app/actions/workflows/ci.yml) 
+
+![image](https://img.shields.io/badge/Claude-D97757?style=for-the-badge&logo=claude&logoColor=white)
+![image](https://img.shields.io/badge/github%20copilot-000000?style=for-the-badge&logo=githubcopilot&logoColor=white)
+![image](https://img.shields.io/badge/Material%20UI-007FFF?style=for-the-badge&logo=mui&logoColor=white)
+
 
 # OV-APP - Sales Contract & Purchase Order Management System
 
