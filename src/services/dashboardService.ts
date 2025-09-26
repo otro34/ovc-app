@@ -209,7 +209,7 @@ export class DashboardService {
   // Método para exportar datos
   async exportData(type: 'contracts' | 'orders' | 'clients' | 'all' = 'all') {
     try {
-      let data: any = {};
+      const data: any = {};
 
       if (type === 'all' || type === 'clients') {
         data.clients = await db.clients.toArray();

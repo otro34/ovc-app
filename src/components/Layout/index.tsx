@@ -23,15 +23,19 @@ import {
   ShoppingCart as ShoppingCartIcon,
   ExitToApp as ExitToAppIcon,
   AccountCircle,
+  AdminPanelSettings as AdminIcon,
+  Lock as LockIcon,
 } from '@mui/icons-material';
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { ChangePasswordDialog } from '../ChangePasswordDialog';
 
 const drawerWidth = 240;
 
 const Layout: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -53,12 +57,26 @@ const Layout: React.FC = () => {
     navigate('/login');
   };
 
+  const handleChangePassword = () => {
+    setShowPasswordDialog(true);
+    handleProfileMenuClose();
+  };
+
+  const handlePasswordChangeSuccess = () => {
+    // You could show a notification here
+    console.log('Contraseña cambiada exitosamente');
+  };
+
   const menuItems = [
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
     { text: 'Clientes', icon: <PeopleIcon />, path: '/dashboard/clientes' },
     { text: 'Contratos', icon: <DescriptionIcon />, path: '/dashboard/contratos' },
     { text: 'Pedidos de Venta', icon: <ShoppingCartIcon />, path: '/dashboard/pedidos' },
   ];
+
+  const adminMenuItems = user?.role === 'admin' ? [
+    { text: 'Administración', icon: <AdminIcon />, path: '/admin' },
+  ] : [];
 
   const drawer = (
     <div>
@@ -84,6 +102,27 @@ const Layout: React.FC = () => {
           </ListItem>
         ))}
       </List>
+      {adminMenuItems.length > 0 && (
+        <>
+          <Divider />
+          <List>
+            {adminMenuItems.map((item) => (
+              <ListItem key={item.text} disablePadding>
+                <ListItemButton
+                  selected={location.pathname === item.path}
+                  onClick={() => {
+                    navigate(item.path);
+                    setMobileOpen(false);
+                  }}
+                >
+                  <ListItemIcon>{item.icon}</ListItemIcon>
+                  <ListItemText primary={item.text} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+        </>
+      )}
     </div>
   );
 
@@ -136,6 +175,12 @@ const Layout: React.FC = () => {
               horizontal: 'right',
             }}
           >
+            <MenuItem onClick={handleChangePassword}>
+              <ListItemIcon>
+                <LockIcon fontSize="small" />
+              </ListItemIcon>
+              Cambiar Contraseña
+            </MenuItem>
             <MenuItem onClick={handleLogout}>
               <ListItemIcon>
                 <ExitToAppIcon fontSize="small" />
@@ -186,6 +231,12 @@ const Layout: React.FC = () => {
         <Toolbar />
         <Outlet />
       </Box>
+
+      <ChangePasswordDialog
+        open={showPasswordDialog}
+        onClose={() => setShowPasswordDialog(false)}
+        onSuccess={handlePasswordChangeSuccess}
+      />
     </Box>
   );
 };

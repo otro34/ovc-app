@@ -1,6 +1,5 @@
 import { db, type PurchaseOrder } from './database';
 import type { IPurchaseOrder, IPurchaseOrderCreate, IPurchaseOrderUpdate, IPurchaseOrderWithContract, IPurchaseOrderStats } from '../types/purchaseOrder';
-import { contractService } from './contractService';
 
 export class PurchaseOrderService {
   async getAllPurchaseOrders(): Promise<IPurchaseOrderWithContract[]> {
@@ -235,6 +234,125 @@ export class PurchaseOrderService {
 
   canDeleteOrder(_order: IPurchaseOrder): boolean {
     return true; // Se puede eliminar cualquier pedido, con las validaciones correspondientes
+  }
+
+  /**
+   * Cambia el estado de un pedido a 'delivered' (entregado)
+   */
+  async markAsDelivered(orderId: number, deliveryDate?: Date): Promise<IPurchaseOrder> {
+    const order = await this.getPurchaseOrderById(orderId);
+    if (!order) {
+      throw new Error('Pedido no encontrado');
+    }
+
+    if (order.status !== 'pending') {
+      throw new Error('Solo se pueden entregar pedidos pendientes');
+    }
+
+    const updatedOrder: IPurchaseOrder = {
+      ...order,
+      status: 'delivered',
+      deliveryDate: deliveryDate || new Date(),
+      updatedAt: new Date()
+    };
+
+    await db.purchaseOrders.update(orderId, updatedOrder);
+
+    // Actualizar estado del contrato
+    const { contractService } = await import('./contractService');
+    await contractService.updateContractStatus(order.contractId);
+
+    return updatedOrder;
+  }
+
+  /**
+   * Cambia el estado de un pedido a 'cancelled' (cancelado) y restaura el volumen del contrato
+   */
+  async markAsCancelled(orderId: number, reason?: string): Promise<IPurchaseOrder> {
+    const order = await this.getPurchaseOrderById(orderId);
+    if (!order) {
+      throw new Error('Pedido no encontrado');
+    }
+
+    if (order.status !== 'pending') {
+      throw new Error('Solo se pueden cancelar pedidos pendientes');
+    }
+
+    // Restaurar volumen en el contrato
+    const contract = await db.contracts.get(order.contractId);
+    if (contract) {
+      const updatedContract = {
+        ...contract,
+        attendedVolume: Math.max(0, contract.attendedVolume - order.volume),
+        pendingVolume: contract.pendingVolume + order.volume,
+        updatedAt: new Date()
+      };
+      await db.contracts.update(order.contractId, updatedContract);
+    }
+
+    const updatedOrder: IPurchaseOrder = {
+      ...order,
+      status: 'cancelled',
+      notes: reason ? `${order.notes || ''}\n[CANCELADO: ${reason}]`.trim() : order.notes,
+      updatedAt: new Date()
+    };
+
+    await db.purchaseOrders.update(orderId, updatedOrder);
+
+    // Actualizar estado del contrato
+    const { contractService } = await import('./contractService');
+    await contractService.updateContractStatus(order.contractId);
+
+    return updatedOrder;
+  }
+
+  /**
+   * Reactiva un pedido cancelado (solo si el contrato tiene volumen disponible)
+   */
+  async reactivateOrder(orderId: number): Promise<IPurchaseOrder> {
+    const order = await this.getPurchaseOrderById(orderId);
+    if (!order) {
+      throw new Error('Pedido no encontrado');
+    }
+
+    if (order.status !== 'cancelled') {
+      throw new Error('Solo se pueden reactivar pedidos cancelados');
+    }
+
+    // Verificar si el contrato tiene volumen disponible
+    const contract = await db.contracts.get(order.contractId);
+    if (!contract) {
+      throw new Error('Contrato no encontrado');
+    }
+
+    if (contract.pendingVolume < order.volume) {
+      throw new Error('El contrato no tiene suficiente volumen disponible para reactivar este pedido');
+    }
+
+    // Actualizar volúmenes del contrato
+    const updatedContract = {
+      ...contract,
+      attendedVolume: contract.attendedVolume + order.volume,
+      pendingVolume: contract.pendingVolume - order.volume,
+      updatedAt: new Date()
+    };
+    await db.contracts.update(order.contractId, updatedContract);
+
+    // Reactivar pedido
+    const updatedOrder: IPurchaseOrder = {
+      ...order,
+      status: 'pending',
+      deliveryDate: undefined,
+      updatedAt: new Date()
+    };
+
+    await db.purchaseOrders.update(orderId, updatedOrder);
+
+    // Actualizar estado del contrato
+    const { contractService } = await import('./contractService');
+    await contractService.updateContractStatus(order.contractId);
+
+    return updatedOrder;
   }
 }
 

@@ -139,6 +139,158 @@ export class ContractService {
       cancelled: all.filter(c => c.status === 'cancelled').length
     };
   }
+
+  /**
+   * Evalúa y actualiza el estado del contrato basado en sus pedidos
+   */
+  async updateContractStatus(contractId: number): Promise<void> {
+    try {
+      const contract = await db.contracts.get(contractId);
+      if (!contract) {
+        throw new Error('Contrato no encontrado');
+      }
+
+      // Obtener todos los pedidos del contrato
+      const orders = await db.purchaseOrders.where('contractId').equals(contractId).toArray();
+
+      let newStatus: 'active' | 'completed' | 'cancelled' = contract.status;
+
+      // Verificar si el contrato está vencido
+      const now = new Date();
+      const isExpired = now > new Date(contract.endDate);
+
+      // Lógica para determinar el nuevo estado
+      if (orders.length === 0) {
+        // Sin pedidos: mantener active o cambiar a cancelled si está vencido
+        newStatus = isExpired ? 'cancelled' : 'active';
+      } else {
+        // Con pedidos: evaluar el estado basado en los pedidos
+        const pendingOrders = orders.filter(o => o.status === 'pending');
+        const deliveredOrders = orders.filter(o => o.status === 'delivered');
+        const cancelledOrders = orders.filter(o => o.status === 'cancelled');
+
+        if (pendingOrders.length > 0) {
+          // Hay pedidos pendientes: mantener activo (incluso si está vencido)
+          newStatus = 'active';
+        } else if (deliveredOrders.length > 0 && cancelledOrders.length >= 0) {
+          // Solo hay pedidos entregados/cancelados, verificar volumen
+          const deliveredVolume = deliveredOrders.reduce((sum, order) => sum + order.volume, 0);
+
+          if (deliveredVolume >= contract.totalVolume) {
+            // Todo el volumen fue entregado: completado
+            newStatus = 'completed';
+          } else if (isExpired) {
+            // No se completó el volumen y está vencido: cancelado
+            newStatus = 'cancelled';
+          } else {
+            // Aún puede recibir más pedidos
+            newStatus = 'active';
+          }
+        } else {
+          // Solo pedidos cancelados: evaluar por fecha de vencimiento
+          newStatus = isExpired ? 'cancelled' : 'active';
+        }
+      }
+
+      // Actualizar el estado si ha cambiado
+      if (newStatus !== contract.status) {
+        await db.contracts.update(contractId, {
+          status: newStatus,
+          updatedAt: new Date()
+        });
+
+        console.log(`Contrato ${contract.correlativeNumber} cambió de estado: ${contract.status} → ${newStatus}`);
+      }
+    } catch (error) {
+      console.error('Error actualizando estado del contrato:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Actualiza los estados de todos los contratos
+   */
+  async updateAllContractStatuses(): Promise<void> {
+    try {
+      const contracts = await db.contracts.toArray();
+
+      for (const contract of contracts) {
+        if (contract.id) {
+          await this.updateContractStatus(contract.id);
+        }
+      }
+    } catch (error) {
+      console.error('Error actualizando estados de contratos:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Marca un contrato como cancelado manualmente
+   */
+  async markContractAsCancelled(contractId: number, reason?: string): Promise<void> {
+    try {
+      const contract = await db.contracts.get(contractId);
+      if (!contract) {
+        throw new Error('Contrato no encontrado');
+      }
+
+      // Verificar que no tenga pedidos pendientes
+      const pendingOrders = await db.purchaseOrders
+        .where('contractId')
+        .equals(contractId)
+        .filter(order => order.status === 'pending')
+        .toArray();
+
+      if (pendingOrders.length > 0) {
+        throw new Error('No se puede cancelar un contrato con pedidos pendientes. Cancele los pedidos primero.');
+      }
+
+      await db.contracts.update(contractId, {
+        status: 'cancelled',
+        updatedAt: new Date()
+      });
+
+      console.log(`Contrato ${contract.correlativeNumber} cancelado manualmente${reason ? ': ' + reason : ''}`);
+    } catch (error) {
+      console.error('Error cancelando contrato:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Reactiva un contrato cancelado
+   */
+  async reactivateContract(contractId: number): Promise<void> {
+    try {
+      const contract = await db.contracts.get(contractId);
+      if (!contract) {
+        throw new Error('Contrato no encontrado');
+      }
+
+      if (contract.status !== 'cancelled') {
+        throw new Error('Solo se pueden reactivar contratos cancelados');
+      }
+
+      // Verificar que no esté vencido
+      const now = new Date();
+      const isExpired = now > new Date(contract.endDate);
+
+      if (isExpired) {
+        throw new Error('No se puede reactivar un contrato vencido. Extienda la fecha de vencimiento primero.');
+      }
+
+      await db.contracts.update(contractId, {
+        status: 'active',
+        updatedAt: new Date()
+      });
+
+      console.log(`Contrato ${contract.correlativeNumber} reactivado`);
+    } catch (error) {
+      console.error('Error reactivando contrato:', error);
+      throw error;
+    }
+  }
 }
 
 export const contractService = new ContractService();

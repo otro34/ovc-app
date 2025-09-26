@@ -1,4 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie';
+import type { ISystemConfiguration } from '../types/system';
 
 export interface User {
   id?: number;
@@ -54,15 +55,17 @@ class OVDatabase extends Dexie {
   clients!: EntityTable<Client, 'id'>;
   contracts!: EntityTable<Contract, 'id'>;
   purchaseOrders!: EntityTable<PurchaseOrder, 'id'>;
+  systemConfiguration!: EntityTable<ISystemConfiguration, 'id'>;
 
   constructor() {
     super('OVDatabase');
 
-    this.version(1).stores({
+    this.version(2).stores({
       users: '++id, username, email, role, createdAt',
       clients: '++id, name, email, phone, createdAt',
       contracts: '++id, correlativeNumber, clientId, status, startDate, endDate, createdAt',
-      purchaseOrders: '++id, contractId, orderDate, deliveryDate, status, createdAt'
+      purchaseOrders: '++id, contractId, orderDate, deliveryDate, status, createdAt',
+      systemConfiguration: '++id, createdAt, updatedAt'
     });
 
     this.on('populate', () => this.populate());
