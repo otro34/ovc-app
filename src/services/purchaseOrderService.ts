@@ -278,17 +278,8 @@ export class PurchaseOrderService {
       throw new Error('Solo se pueden cancelar pedidos pendientes');
     }
 
-    // Restaurar volumen en el contrato
-    const contract = await db.contracts.get(order.contractId);
-    if (contract) {
-      const updatedContract = {
-        ...contract,
-        attendedVolume: Math.max(0, contract.attendedVolume - order.volume),
-        pendingVolume: contract.pendingVolume + order.volume,
-        updatedAt: new Date()
-      };
-      await db.contracts.update(order.contractId, updatedContract);
-    }
+    // Restaurar el volumen al contrato usando el método del servicio
+    await contractService.updateContractVolumes(order.contractId, order.volume, 'subtract');
 
     const updatedOrder: IPurchaseOrder = {
       ...order,
