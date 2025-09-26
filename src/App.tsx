@@ -3,12 +3,14 @@ import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { SessionTimeout } from './components/SessionTimeout';
+import './services/automatedTasks'; // Inicializar tareas automáticas
 import Layout from './components/Layout';
 import LoginPage from './pages/LoginPage';
 import Dashboard from './pages/Dashboard';
 import { Clients } from './pages/Clients';
 import Contracts from './pages/Contracts';
 import PurchaseOrders from './pages/PurchaseOrders';
+import Administration from './pages/Administration';
 
 const theme = createTheme({
   palette: {
@@ -46,7 +48,7 @@ function App() {
               path="/admin"
               element={
                 <ProtectedRoute requireRole="admin">
-                  <div>Área de Administración - Solo Admins</div>
+                  <Administration />
                 </ProtectedRoute>
               }
             />

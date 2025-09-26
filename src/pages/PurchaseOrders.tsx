@@ -16,6 +16,7 @@ import { PurchaseOrderForm } from '../components/PurchaseOrderForm';
 import { PurchaseOrderList } from '../components/PurchaseOrderList';
 import { CancelOrderDialog } from '../components/CancelOrderDialog';
 import { PurchaseOrderDetails } from '../components/PurchaseOrderDetails';
+import { OrderStatusDialog } from '../components/OrderStatusDialog';
 import { purchaseOrderService } from '../services/purchaseOrderService';
 import type { IPurchaseOrder } from '../types/purchaseOrder';
 
@@ -60,6 +61,13 @@ export default function PurchaseOrders() {
   }>({
     open: false,
     orderId: null
+  });
+  const [statusDialog, setStatusDialog] = useState<{
+    open: boolean;
+    order: IPurchaseOrder | null;
+  }>({
+    open: false,
+    order: null
   });
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -147,6 +155,50 @@ export default function PurchaseOrders() {
     }
   };
 
+  const handleChangeStatus = async (orderId: number) => {
+    try {
+      const order = await purchaseOrderService.getPurchaseOrderById(orderId);
+      if (order) {
+        setStatusDialog({
+          open: true,
+          order: order
+        });
+      }
+    } catch (error) {
+      console.error('Error loading order for status change:', error);
+    }
+  };
+
+  const handleStatusChange = async (orderId: number, action: string, data?: any) => {
+    try {
+      switch (action) {
+        case 'deliver':
+          await purchaseOrderService.markAsDelivered(orderId, data.deliveryDate);
+          break;
+        case 'cancel':
+          await purchaseOrderService.markAsCancelled(orderId, data.reason);
+          break;
+        case 'reactivate':
+          await purchaseOrderService.reactivateOrder(orderId);
+          break;
+        default:
+          throw new Error('Acción no válida');
+      }
+
+      // Actualizar la lista
+      setRefreshKey(prev => prev + 1);
+
+      // Cerrar diálogo
+      setStatusDialog({
+        open: false,
+        order: null
+      });
+    } catch (error) {
+      console.error('Error changing order status:', error);
+      throw error; // Re-throw para que el diálogo maneje el error
+    }
+  };
+
   return (
     <Container maxWidth="xl">
       <Box sx={{ py: 4 }}>
@@ -189,6 +241,7 @@ export default function PurchaseOrders() {
             onViewOrder={handleViewOrder}
             onEditOrder={handleEditOrder}
             onCancelOrder={handleCancelOrder}
+            onChangeStatus={handleChangeStatus}
           />
         </TabPanel>
 
@@ -217,6 +270,16 @@ export default function PurchaseOrders() {
           onEdit={handleEditFromDetails}
           onCancel={handleCancelFromDetails}
         />
+
+        {/* Status Change Dialog */}
+        {statusDialog.order && (
+          <OrderStatusDialog
+            order={statusDialog.order}
+            open={statusDialog.open}
+            onClose={() => setStatusDialog({ open: false, order: null })}
+            onStatusChange={handleStatusChange}
+          />
+        )}
       </Box>
     </Container>
   );

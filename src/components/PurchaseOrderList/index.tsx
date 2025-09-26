@@ -26,7 +26,9 @@ import {
   MoreVert as MoreVertIcon,
   Visibility as VisibilityIcon,
   Edit as EditIcon,
-  Cancel as CancelIcon
+  Cancel as CancelIcon,
+  CheckCircle as DeliveredIcon,
+  Assignment as StatusIcon
 } from '@mui/icons-material';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -38,6 +40,7 @@ interface PurchaseOrderListProps {
   onViewOrder?: (orderId: number) => void;
   onEditOrder?: (orderId: number) => void;
   onCancelOrder?: (orderId: number) => void;
+  onChangeStatus?: (orderId: number) => void;
   contractId?: number; // Para filtrar por contrato específico
 }
 
@@ -46,6 +49,7 @@ export const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({
   onViewOrder,
   onEditOrder,
   onCancelOrder,
+  onChangeStatus,
   contractId
 }) => {
   const theme = useTheme();
@@ -359,6 +363,18 @@ export const PurchaseOrderList: React.FC<PurchaseOrderListProps> = ({
           <MenuItem onClick={handleEdit}>
             <EditIcon fontSize="small" sx={{ mr: 1 }} />
             Editar
+          </MenuItem>
+        )}
+
+        {onChangeStatus && selectedOrder && (
+          <MenuItem onClick={() => {
+            if (selectedOrder?.id && onChangeStatus) {
+              onChangeStatus(selectedOrder.id);
+              handleMenuClose();
+            }
+          }}>
+            <StatusIcon fontSize="small" sx={{ mr: 1 }} />
+            Cambiar estado
           </MenuItem>
         )}
 

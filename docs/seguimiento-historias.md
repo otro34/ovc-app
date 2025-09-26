@@ -3,7 +3,7 @@
 ## Estado General del Proyecto
 - **Inicio:** 2025-01-24
 - **Fin estimado:** 2025-03-24 (8 semanas después del inicio)
-- **Progreso Global:** 85%
+- **Progreso Global:** 100%
 
 ## Leyenda de Estados
 - 🔵 **Pendiente:** Historia no iniciada
@@ -58,9 +58,9 @@
 ### Sprint 7 - Configuración y Administración
 | ID | Historia | Estado | Issue | PR | Notas |
 |----|----------|--------|-------|-----|-------|
-| HU-018 | Como admin, quiero configurar parámetros del sistema | 🔵 Pendiente | - | - | |
-| HU-019 | Como admin, quiero gestionar usuarios del sistema | 🔵 Pendiente | - | - | |
-| HU-020 | Como usuario, quiero poder cambiar mi contraseña | 🔵 Pendiente | - | - | |
+| HU-018 | Como admin, quiero configurar parámetros del sistema | 🟢 Completada | - | - | Sistema completo de configuración del sistema |
+| HU-019 | Como admin, quiero gestionar usuarios del sistema | 🟢 Completada | - | - | CRUD completo de usuarios y gestión de roles |
+| HU-020 | Como usuario, quiero poder cambiar mi contraseña | 🟢 Completada | - | - | Funcionalidad de cambio de contraseña para usuarios |
 
 ## Métricas del Proyecto
 
@@ -73,8 +73,8 @@
 | Sprint 4 | 2 | 2 | 0 | 0 | 100% |
 | Sprint 5 | 4 | 4 | 0 | 0 | 100% |
 | Sprint 6 | 2 | 2 | 0 | 0 | 100% |
-| Sprint 7 | 3 | 0 | 0 | 3 | 0% |
-| **TOTAL** | **20** | **17** | **0** | **3** | **85%** |
+| Sprint 7 | 3 | 3 | 0 | 0 | 100% |
+| **TOTAL** | **20** | **20** | **0** | **0** | **100%** |
 
 ### Por Épica
 | Épica | Total HU | Completadas | % Completado |
@@ -84,7 +84,7 @@
 | Gestión de Contratos | 5 | 5 | 100% |
 | Gestión de Pedidos | 4 | 4 | 100% |
 | Reportes y Dashboard | 2 | 2 | 100% |
-| Configuración | 3 | 0 | 0% |
+| Configuración | 3 | 3 | 100% |
 
 ## Registro de Cambios
 
@@ -99,6 +99,53 @@
 ```
 
 ### Historial de Cambios
+
+**Fecha:** 2025-09-26
+**Historia:** HU-018, HU-019 y HU-020
+**Cambio:** 🔵 Pendiente → 🟢 Completada
+**Issue:** -
+**PR:** -
+**Comentarios:** Implementación completa del sistema de Configuración y Administración (Sprint 7) con:
+
+**HU-018 - Configuración de Parámetros del Sistema:**
+- Servicio SystemService para gestión de configuración del sistema
+- Tipos TypeScript para configuración del sistema (ISystemConfiguration, ISystemSettings)
+- Componente SystemConfiguration con navegación por pestañas
+- GeneralSettings: Configuración de empresa, sesión y modo mantenimiento
+- LocalizationSettings: Configuración de moneda, formato de fecha y zona horaria
+- FileSettings: Configuración de tamaño máximo de archivos y tipos permitidos
+- BackupSettings: Configuración de respaldos automáticos y manuales
+- NotificationSettings: Configuración de notificaciones por email
+- Validación de configuraciones y manejo de errores
+- Integración con base de datos IndexedDB
+- Página de Administración con acceso restringido a roles admin
+
+**HU-019 - Gestión de Usuarios del Sistema:**
+- Servicio UserService con CRUD completo de usuarios
+- Componente UserManagement con estadísticas y gestión completa
+- UserList con búsqueda, filtrado y acciones por usuario
+- UserForm para creación y edición de usuarios con validaciones
+- UserStats con métricas visuales de usuarios del sistema
+- PasswordChangeDialog para cambio de contraseñas por administradores
+- Validaciones de seguridad (no eliminar último admin, etc.)
+- Roles de usuario (admin/user) con permisos diferenciados
+- Búsqueda de usuarios por nombre, email o username
+
+**HU-020 - Cambio de Contraseña:**
+- Componente ChangePasswordDialog integrado en Layout
+- Opción "Cambiar Contraseña" en menú de perfil de usuario
+- Validaciones de contraseña actual y confirmación
+- Recomendaciones de seguridad para contraseñas
+- Acceso directo desde la barra de navegación
+
+**Funcionalidades adicionales:**
+- Actualización del esquema de base de datos (versión 2) con tabla systemConfiguration
+- Integración completa en Layout con menú de administración para admins
+- Navegación coherente entre todas las funcionalidades
+- Manejo de estados de carga y errores en toda la aplicación
+- Interfaz responsiva con Material-UI v5
+- Validaciones de TypeScript y desarrollo funcional
+- Arquitectura modular y mantenible
 
 **Fecha:** 2025-09-25
 **Historia:** HU-016 y HU-017
