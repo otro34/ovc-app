@@ -1,4 +1,4 @@
-import { db } from './database';
+import { db, type Client, type Contract, type PurchaseOrder } from './database';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
 
 export interface DashboardStats {
@@ -44,6 +44,12 @@ export interface MonthlyTrend {
   orders: number;
   volume: number;
   revenue: number;
+}
+
+interface ExportData {
+  clients?: Client[];
+  contracts?: (Contract & { clientName: string })[];
+  orders?: (PurchaseOrder & { contractNumber: string; clientName: string; totalValue: number })[];
 }
 
 export class DashboardService {
@@ -209,7 +215,7 @@ export class DashboardService {
   // Método para exportar datos
   async exportData(type: 'contracts' | 'orders' | 'clients' | 'all' = 'all') {
     try {
-      const data: any = {};
+      const data: ExportData = {};
 
       if (type === 'all' || type === 'clients') {
         data.clients = await db.clients.toArray();

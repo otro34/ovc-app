@@ -232,7 +232,7 @@ export class PurchaseOrderService {
     return order.status === 'pending';
   }
 
-  canDeleteOrder(_order: IPurchaseOrder): boolean {
+  canDeleteOrder(): boolean {
     return true; // Se puede eliminar cualquier pedido, con las validaciones correspondientes
   }
 

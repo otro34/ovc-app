@@ -20,7 +20,7 @@ interface LocalizationSettingsProps {
     dateFormat: string;
     timeZone: string;
   };
-  onUpdate: (updates: any) => void;
+  onUpdate: (updates: { currency: string; dateFormat: string; timeZone: string }) => void;
 }
 
 const CURRENCIES = [
@@ -50,7 +50,7 @@ export const LocalizationSettings: React.FC<LocalizationSettingsProps> = ({
   const [formData, setFormData] = useState(settings);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
-  const handleInputChange = (field: string) => (event: any) => {
+  const handleInputChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { target: { value: string } }) => {
     setFormData(prev => ({
       ...prev,
       [field]: event.target.value
@@ -88,7 +88,6 @@ export const LocalizationSettings: React.FC<LocalizationSettingsProps> = ({
   };
 
   const formatDateExample = (format: string) => {
-    const date = new Date('2023-12-31');
     switch (format) {
       case 'DD/MM/YYYY':
         return '31/12/2023';

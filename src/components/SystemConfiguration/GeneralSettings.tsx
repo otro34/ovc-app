@@ -26,7 +26,7 @@ interface GeneralSettingsProps {
     sessionTimeout: number;
     systemMaintenanceMode: boolean;
   };
-  onUpdate: (updates: any) => void;
+  onUpdate: (updates: Partial<typeof settings>) => void;
   onResetToDefault: () => void;
 }
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   TextField,
@@ -101,38 +101,7 @@ export const PurchaseOrderForm: React.FC<PurchaseOrderFormProps> = ({
   const contractId = watch('contractId');
   const volume = watch('volume');
 
-  useEffect(() => {
-    if (open) {
-      loadContracts();
-      if (editOrder) {
-        // Load edit data
-        setValue('contractId', editOrder.contractId);
-        setValue('volume', editOrder.volume);
-        setValue('price', editOrder.price);
-        setValue('orderDate', new Date(editOrder.orderDate));
-        setValue('deliveryDate', editOrder.deliveryDate ? new Date(editOrder.deliveryDate) : undefined);
-        setValue('notes', editOrder.notes || '');
-      } else if (preselectedContractId) {
-        setValue('contractId', preselectedContractId);
-      }
-    }
-  }, [open, preselectedContractId, editOrder, setValue, isEditMode]);
-
-  useEffect(() => {
-    if (contractId) {
-      const contract = contracts.find(c => c.id === contractId);
-      setSelectedContract(contract || null);
-
-      if (contract && !isEditMode) {
-        // Solo sugerir el precio del contrato en modo creación
-        setValue('price', contract.salePrice);
-      }
-    } else {
-      setSelectedContract(null);
-    }
-  }, [contractId, contracts, setValue, isEditMode]);
-
-  const loadContracts = async () => {
+  const loadContracts = useCallback(async () => {
     try {
       const allContracts = await contractService.findAll();
       let contractsToShow: Contract[];
@@ -168,9 +137,40 @@ export const PurchaseOrderForm: React.FC<PurchaseOrderFormProps> = ({
       setError('Error al cargar los contratos');
       console.error('Error loading contracts:', err);
     }
-  };
+  }, [isEditMode, editOrder]);
 
-  const onSubmit = async (data: any) => {
+  useEffect(() => {
+    if (open) {
+      loadContracts();
+      if (editOrder) {
+        // Load edit data
+        setValue('contractId', editOrder.contractId);
+        setValue('volume', editOrder.volume);
+        setValue('price', editOrder.price);
+        setValue('orderDate', new Date(editOrder.orderDate));
+        setValue('deliveryDate', editOrder.deliveryDate ? new Date(editOrder.deliveryDate) : undefined);
+        setValue('notes', editOrder.notes || '');
+      } else if (preselectedContractId) {
+        setValue('contractId', preselectedContractId);
+      }
+    }
+  }, [open, preselectedContractId, editOrder, setValue, isEditMode, loadContracts]);
+
+  useEffect(() => {
+    if (contractId) {
+      const contract = contracts.find(c => c.id === contractId);
+      setSelectedContract(contract || null);
+
+      if (contract && !isEditMode) {
+        // Solo sugerir el precio del contrato en modo creación
+        setValue('price', contract.salePrice);
+      }
+    } else {
+      setSelectedContract(null);
+    }
+  }, [contractId, contracts, setValue, isEditMode]);
+
+  const onSubmit = async (data: IPurchaseOrderCreate) => {
     if (!isValid) return;
 
     setLoading(true);

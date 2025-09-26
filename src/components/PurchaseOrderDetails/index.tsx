@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -51,13 +51,7 @@ export const PurchaseOrderDetails: React.FC<PurchaseOrderDetailsProps> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (orderId && open) {
-      loadOrderDetails();
-    }
-  }, [orderId, open]);
-
-  const loadOrderDetails = async () => {
+  const loadOrderDetails = useCallback(async () => {
     if (!orderId) return;
 
     setLoading(true);
@@ -89,7 +83,13 @@ export const PurchaseOrderDetails: React.FC<PurchaseOrderDetailsProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [orderId]);
+
+  useEffect(() => {
+    if (orderId && open) {
+      loadOrderDetails();
+    }
+  }, [orderId, open, loadOrderDetails]);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('es-CO', {

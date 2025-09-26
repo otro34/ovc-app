@@ -15,10 +15,11 @@ import {
 } from '@mui/material';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import type { User } from '../../services/database';
+import type { CreateUserRequest, UpdateUserRequest } from '../../services/userService';
 
 interface UserFormProps {
   user: User | null;
-  onSubmit: (data: any) => void;
+  onSubmit: (data: CreateUserRequest | UpdateUserRequest) => void;
   onCancel: () => void;
 }
 
@@ -41,10 +42,10 @@ export const UserForm: React.FC<UserFormProps> = ({ user, onSubmit, onCancel }) 
     setErrors([]);
   };
 
-  const handleRoleChange = (event: any) => {
+  const handleRoleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setFormData(prev => ({
       ...prev,
-      role: event.target.value
+      role: event.target.value as 'admin' | 'user'
     }));
     setErrors([]);
   };
@@ -95,16 +96,30 @@ export const UserForm: React.FC<UserFormProps> = ({ user, onSubmit, onCancel }) 
     }
 
     // Preparar datos para envío
-    const submitData: any = {
-      username: formData.username.trim(),
-      email: formData.email.trim() || undefined,
-      name: formData.name.trim() || undefined,
-      role: formData.role,
-    };
+    let submitData: CreateUserRequest | UpdateUserRequest;
 
-    // Solo incluir contraseña si se proporcionó
-    if (formData.password) {
-      submitData.password = formData.password;
+    if (user) {
+      // Editando usuario existente
+      submitData = {
+        username: formData.username.trim(),
+        email: formData.email.trim() || undefined,
+        name: formData.name.trim() || undefined,
+        role: formData.role,
+      } as UpdateUserRequest;
+    } else {
+      // Creando nuevo usuario
+      submitData = {
+        username: formData.username.trim(),
+        password: formData.password,
+        email: formData.email.trim() || undefined,
+        name: formData.name.trim() || undefined,
+        role: formData.role,
+      } as CreateUserRequest;
+    }
+
+    // Para usuarios existentes, solo incluir contraseña si se proporcionó
+    if (user && formData.password) {
+      (submitData as UpdateUserRequest & { password?: string }).password = formData.password;
     }
 
     onSubmit(submitData);

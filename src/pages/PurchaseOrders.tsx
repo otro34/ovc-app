@@ -169,14 +169,14 @@ export default function PurchaseOrders() {
     }
   };
 
-  const handleStatusChange = async (orderId: number, action: string, data?: any) => {
+  const handleStatusChange = async (orderId: number, action: string, data?: { deliveryDate?: Date; reason?: string }) => {
     try {
       switch (action) {
         case 'deliver':
-          await purchaseOrderService.markAsDelivered(orderId, data.deliveryDate);
+          await purchaseOrderService.markAsDelivered(orderId, data?.deliveryDate);
           break;
         case 'cancel':
-          await purchaseOrderService.markAsCancelled(orderId, data.reason);
+          await purchaseOrderService.markAsCancelled(orderId, data?.reason);
           break;
         case 'reactivate':
           await purchaseOrderService.reactivateOrder(orderId);
