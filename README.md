@@ -85,6 +85,12 @@ npm run test:coverage   # Tests with coverage report
 npm run lint            # Run ESLint
 npm run lint:fix        # Fix linting errors
 npm run format          # Format with Prettier
+
+# Releases (Semantic Release)
+npm run semantic-release      # Create release (CI only)
+npm run semantic-release:dry  # Dry run preview
+npm run release:validate      # Validate release without CI check
+npm run release:local         # Local release (for testing)
 ```
 
 ## 📁 Project Structure
@@ -169,6 +175,37 @@ type(scope): description [HU-XXX] #issue
 Example:
 feat(contracts): implement volume validation [HU-007] #123
 ```
+
+## 🚀 Automated Releases
+
+This project uses [semantic-release](https://semantic-release.gitbook.io/) for automated versioning and releases based on [Conventional Commits](https://www.conventionalcommits.org/).
+
+### Release Types
+- **feat**: Minor version bump (e.g., 1.0.0 → 1.1.0)
+- **fix**: Patch version bump (e.g., 1.0.0 → 1.0.1)
+- **BREAKING CHANGE**: Major version bump (e.g., 1.0.0 → 2.0.0)
+
+### Commit Types for Releases
+- `feat:` - New features
+- `fix:` - Bug fixes
+- `docs:` - Documentation changes (patch)
+- `refactor:` - Code refactoring (patch)
+- `perf:` - Performance improvements (patch)
+- `test:` - Adding tests
+- `build:` - Build system changes
+- `ci:` - CI configuration changes
+- `chore:` - Maintenance tasks (no release)
+
+### Release Process
+1. **Automatic**: Push to `main` → GitHub Actions runs → Release created
+2. **Manual validation**: Use `npm run release:validate` to preview changes
+3. **Dry run**: Use `npm run semantic-release:dry` to test configuration
+
+### Generated Artifacts
+- **CHANGELOG.md**: Automatically generated and maintained
+- **GitHub Releases**: With release notes and build artifacts
+- **Version bumping**: package.json updated automatically
+- **Git tags**: Semantic version tags created
 
 ## 📈 Implementation Phases
 
