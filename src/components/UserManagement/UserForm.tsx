@@ -42,7 +42,7 @@ export const UserForm: React.FC<UserFormProps> = ({ user, onSubmit, onCancel }) 
     setErrors([]);
   };
 
-  const handleRoleChange = (event: any) => {
+  const handleRoleChange = (event: { target: { value: string } }) => {
     setFormData(prev => ({
       ...prev,
       role: event.target.value as 'admin' | 'user'

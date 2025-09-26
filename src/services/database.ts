@@ -20,6 +20,7 @@ export interface Client {
   address?: string;
   createdAt?: Date;
   updatedAt?: Date;
+  [key: string]: unknown;
 }
 
 export interface Contract {
@@ -35,6 +36,7 @@ export interface Contract {
   status: 'active' | 'completed' | 'cancelled';
   createdAt?: Date;
   updatedAt?: Date;
+  [key: string]: unknown;
 }
 
 export interface PurchaseOrder {
@@ -48,6 +50,7 @@ export interface PurchaseOrder {
   notes?: string;
   createdAt?: Date;
   updatedAt?: Date;
+  [key: string]: unknown;
 }
 
 class OVDatabase extends Dexie {

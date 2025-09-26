@@ -170,7 +170,7 @@ export const PurchaseOrderForm: React.FC<PurchaseOrderFormProps> = ({
     }
   }, [contractId, contracts, setValue, isEditMode]);
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: IPurchaseOrderCreate) => {
     if (!isValid) return;
 
     setLoading(true);

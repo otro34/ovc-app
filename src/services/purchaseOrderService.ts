@@ -59,6 +59,7 @@ export class PurchaseOrderService {
     const now = new Date();
     const purchaseOrder: PurchaseOrder = {
       ...purchaseOrderData,
+      deliveryDate: purchaseOrderData.deliveryDate || undefined,
       status: 'pending',
       createdAt: now,
       updatedAt: now

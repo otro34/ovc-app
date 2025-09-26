@@ -29,7 +29,7 @@ export class ContractService {
     };
 
     const id = await db.contracts.add(newContract);
-    return { ...newContract, id };
+    return { ...newContract, id } as Contract;
   }
 
   async findAll(): Promise<Contract[]> {

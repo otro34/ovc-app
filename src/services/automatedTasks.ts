@@ -1,13 +1,10 @@
 import { contractService } from './contractService';
 
-declare global {
-  namespace NodeJS {
-    interface Timeout {}
-  }
-}
+// Type for Node.js timeout - using ReturnType from setTimeout
+type NodeTimeout = ReturnType<typeof setTimeout>;
 
 export class AutomatedTasksService {
-  private intervalId: NodeJS.Timeout | null = null;
+  private intervalId: NodeTimeout | null = null;
   private readonly CHECK_INTERVAL = 60 * 60 * 1000; // 1 hora en millisegundos
 
   /**
@@ -34,7 +31,7 @@ export class AutomatedTasksService {
    */
   stop(): void {
     if (this.intervalId) {
-      clearInterval(this.intervalId as any);
+      clearInterval(this.intervalId);
       this.intervalId = null;
       console.log('⏹️ Tareas automáticas detenidas');
     }
